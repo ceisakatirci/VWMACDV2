@@ -15,7 +15,9 @@ namespace VWMACDV2.WinForms
         static void Main()
         {
 
-
+            /*
+             TEST
+             */
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
