@@ -20,7 +20,7 @@ namespace VWMACDV2.WinForms
         RollingPointPairList vwmacdList = new RollingPointPairList(610);
         RollingPointPairList signalList = new RollingPointPairList(610);
         RollingPointPairList histList = new RollingPointPairList(610);
-        Dictionary<string, Tuple<List<decimal?>, List<decimal?>, List<decimal?>>> kayitlar = new Dictionary<string, Tuple<List<decimal?>, List<decimal?>, List<decimal?>>>();
+        Dictionary<string, Tuple<List<decimal?>, List<decimal?>, List<decimal?>, List<decimal?>>> kayitlar = new Dictionary<string, Tuple<List<decimal?>, List<decimal?>, List<decimal?>, List<decimal?>>>();
         private static readonly object locker = new object();
         public Form1()
         {
@@ -171,7 +171,7 @@ namespace VWMACDV2.WinForms
             }
 
             var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
-            var closes = liste4Saatlik.Select(x => x.Close).ToList();
+            var closes = liste4Saatlik.Select(x => (Nullable<decimal>)x.Close).ToList();
             var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
             /*
                 fastMA = ema(volume*close, fastperiod)/ema(volume, fastperiod)
@@ -194,16 +194,12 @@ namespace VWMACDV2.WinForms
 
             if (listBox_EMA144.Items.Contains(symbol))
                 listBox_EMA144.Items.Remove(symbol);
-
+         
             if (hist.Last().Value > 0)
             {
-                kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist));
-                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);
+                kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist, closes));
+                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);           
 
-                if (((int)closes.Ema(144).Last()).Equals((int)closes.Last()))
-                {
-                    listBox_EMA144.Items.Add(symbol);
-                }
 
                 //if (checkBox_Aktif.Checked)
                 //{
@@ -214,6 +210,35 @@ namespace VWMACDV2.WinForms
                 //    }
                 //}
             }
+
+
+            var ema = closes.Ema(144).Last();
+            var last = closes.Last();
+
+            if (araliktaMi(ema, last))
+            {
+                listBox_EMA144.Items.Add("EMA144-" + symbol);
+            }
+
+            var sma = closes.Sma(200).Last();
+
+            if (araliktaMi(sma, last))
+            {
+                listBox_EMA144.Items.Add("SMA200-" + symbol);
+            }
+
+            sma = closes.Sma(50).Last();
+
+            if (sma.Equals(last))
+            {
+                listBox_EMA144.Items.Add("SMA50-" + symbol);
+            }
+
+        }
+
+        bool araliktaMi(decimal? a, decimal? b)
+        {
+            return a <= b && b <= a * 1.1m;
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
@@ -226,6 +251,10 @@ namespace VWMACDV2.WinForms
             if (sender.SelectedItem != null)
             {
                 var key = sender.SelectedItem.ToString();
+                if (key.Contains("-"))
+                {
+                    key = key.Substring(key.IndexOf('-') + 1);
+                }
                 //MessageBox.Show(key);
                 if (kayitlar.ContainsKey(key))
                 {
@@ -236,6 +265,7 @@ namespace VWMACDV2.WinForms
                     var count = vwmacd.Count;
                     var signal = kayitlar[key].Item2;
                     var hist = kayitlar[key].Item3;
+                    var closes = kayitlar[key].Item4;
                     for (int i = 0; i < count; i++)
                     {
                         vwmacdListesineEkle(i, Convert.ToDouble(vwmacd[i]));
@@ -243,8 +273,21 @@ namespace VWMACDV2.WinForms
                         histListesineEkle(i, Convert.ToDouble(hist[i]));
                     }
 
-                    label_Vwmacd.Text = vwmacd.Last().Value.ToString();
-                    label_Signal.Text = signal.Last().Value.ToString();
+
+              
+
+
+
+
+                    //if (((int).Equals((int)closes.Last()))
+                    //{
+                    //    label_Vwmacd.Text = ((int)closes.Ema(144).Last()).ToString();
+                    //    label_Signal.Text = ((int)closes.Last()).ToString();
+                    //}
+
+
+                    //label_Vwmacd.Text = vwmacd.Last().Value.ToString();
+                    //label_Signal.Text = signal.Last().Value.ToString();
                 }
             }
         }
