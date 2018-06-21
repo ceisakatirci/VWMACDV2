@@ -30,16 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.button_Baslat = new System.Windows.Forms.Button();
+            this.listBox_SinyalAlinanlarHepsi = new System.Windows.Forms.ListBox();
+            this.listBox_AnlikSinyalAlinanlar = new System.Windows.Forms.ListBox();
+            this.label_Vwmacd = new System.Windows.Forms.Label();
+            this.label_Signal = new System.Windows.Forms.Label();
+            this.checkBox_Aktif = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // zedGraphControl1
@@ -54,116 +50,97 @@
             this.zedGraphControl1.ScrollMinX = 0D;
             this.zedGraphControl1.ScrollMinY = 0D;
             this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(1020, 492);
+            this.zedGraphControl1.Size = new System.Drawing.Size(1597, 492);
             this.zedGraphControl1.TabIndex = 0;
             this.zedGraphControl1.UseExtendedPrintDialog = true;
             // 
-            // button1
+            // button_Baslat
             // 
-            this.button1.Location = new System.Drawing.Point(71, 35);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button_Baslat.Location = new System.Drawing.Point(40, 517);
+            this.button_Baslat.Name = "button_Baslat";
+            this.button_Baslat.Size = new System.Drawing.Size(75, 23);
+            this.button_Baslat.TabIndex = 1;
+            this.button_Baslat.Text = "Başlat";
+            this.button_Baslat.UseVisualStyleBackColor = true;
+            this.button_Baslat.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label1
+            // listBox_SinyalAlinanlarHepsi
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
+            this.listBox_SinyalAlinanlarHepsi.Dock = System.Windows.Forms.DockStyle.Right;
+            this.listBox_SinyalAlinanlarHepsi.FormattingEnabled = true;
+            this.listBox_SinyalAlinanlarHepsi.Location = new System.Drawing.Point(1271, 492);
+            this.listBox_SinyalAlinanlarHepsi.Name = "listBox_SinyalAlinanlarHepsi";
+            this.listBox_SinyalAlinanlarHepsi.Size = new System.Drawing.Size(326, 307);
+            this.listBox_SinyalAlinanlarHepsi.TabIndex = 3;
+            this.listBox_SinyalAlinanlarHepsi.SelectedIndexChanged += new System.EventHandler(this.listBox_SinyalAlinanlarHepsi_SelectedIndexChanged);
+            this.listBox_SinyalAlinanlarHepsi.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
-            // listBox1
+            // listBox_AnlikSinyalAlinanlar
             // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(698, 492);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(322, 307);
-            this.listBox1.TabIndex = 3;
-            this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
+            this.listBox_AnlikSinyalAlinanlar.Dock = System.Windows.Forms.DockStyle.Right;
+            this.listBox_AnlikSinyalAlinanlar.FormattingEnabled = true;
+            this.listBox_AnlikSinyalAlinanlar.Location = new System.Drawing.Point(918, 492);
+            this.listBox_AnlikSinyalAlinanlar.Name = "listBox_AnlikSinyalAlinanlar";
+            this.listBox_AnlikSinyalAlinanlar.Size = new System.Drawing.Size(353, 307);
+            this.listBox_AnlikSinyalAlinanlar.TabIndex = 4;
+            this.listBox_AnlikSinyalAlinanlar.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBox_AnlikSinyalAlinanlar_MouseDoubleClick);
             // 
-            // listBox2
+            // label_Vwmacd
             // 
-            this.listBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(0, 10);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(692, 134);
-            this.listBox2.TabIndex = 4;
+            this.label_Vwmacd.AutoSize = true;
+            this.label_Vwmacd.Location = new System.Drawing.Point(51, 608);
+            this.label_Vwmacd.Name = "label_Vwmacd";
+            this.label_Vwmacd.Size = new System.Drawing.Size(47, 13);
+            this.label_Vwmacd.TabIndex = 5;
+            this.label_Vwmacd.Text = "vwmacd";
             // 
-            // panel1
+            // label_Signal
             // 
-            this.panel1.Controls.Add(this.listBox2);
-            this.panel1.Location = new System.Drawing.Point(0, 498);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(692, 144);
-            this.panel1.TabIndex = 5;
+            this.label_Signal.AutoSize = true;
+            this.label_Signal.Location = new System.Drawing.Point(51, 575);
+            this.label_Signal.Name = "label_Signal";
+            this.label_Signal.Size = new System.Drawing.Size(34, 13);
+            this.label_Signal.TabIndex = 5;
+            this.label_Signal.Text = "signal";
             // 
-            // panel2
+            // checkBox_Aktif
             // 
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.button1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 640);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(698, 159);
-            this.panel2.TabIndex = 6;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(188, 35);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(68, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "label1";
+            this.checkBox_Aktif.AutoSize = true;
+            this.checkBox_Aktif.Location = new System.Drawing.Point(193, 521);
+            this.checkBox_Aktif.Name = "checkBox_Aktif";
+            this.checkBox_Aktif.Size = new System.Drawing.Size(47, 17);
+            this.checkBox_Aktif.TabIndex = 6;
+            this.checkBox_Aktif.Text = "Aktif";
+            this.checkBox_Aktif.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 799);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.listBox1);
+            this.ClientSize = new System.Drawing.Size(1597, 799);
+            this.Controls.Add(this.checkBox_Aktif);
+            this.Controls.Add(this.label_Signal);
+            this.Controls.Add(this.label_Vwmacd);
+            this.Controls.Add(this.listBox_AnlikSinyalAlinanlar);
+            this.Controls.Add(this.listBox_SinyalAlinanlarHepsi);
             this.Controls.Add(this.zedGraphControl1);
+            this.Controls.Add(this.button_Baslat);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private ZedGraph.ZedGraphControl zedGraphControl1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ListBox listBox2;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button_Baslat;
+        private System.Windows.Forms.ListBox listBox_SinyalAlinanlarHepsi;
+        private System.Windows.Forms.ListBox listBox_AnlikSinyalAlinanlar;
+        private System.Windows.Forms.Label label_Vwmacd;
+        private System.Windows.Forms.Label label_Signal;
+        private System.Windows.Forms.CheckBox checkBox_Aktif;
     }
 }
 

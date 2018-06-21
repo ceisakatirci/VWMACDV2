@@ -112,15 +112,20 @@ namespace VWMACDV2.WinForms
             //{
             //    Console.WriteLine(item.Time + " => " + item.Close + "  =>  " + item.VolumeFrom + " => " + item.VolumeTo);
             //}
-            using (var binanceClient = new BinanceClient())
+
+            Task.Run(() =>
             {
-                binanceClient.GetAllPrices().Data
-                   .Where(x => x.Symbol.EndsWith("BTC"))
-                   .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
-                   .AsParallel()
-                   .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
-                   .ForAll(x => signalAl(x));
-            }
+                using (var binanceClient = new BinanceClient())
+                {
+                    binanceClient.GetAllPrices().Data
+                        .Where(x => x.Symbol.EndsWith("BTC"))
+                        .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
+                        .AsParallel()
+                        .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+                        .ForAll(x => signalAl(x));
+                }
+
+            }).Wait();
         }
 
         private static void ekle(string sembol)
@@ -175,37 +180,33 @@ namespace VWMACDV2.WinForms
 
         private async Task signalAl(string symbol)
         {
-  
-
             var client = new CryptoCompareClient();
             var fastperiod = 12;
             var slowperiod = 26;
             var signalperiod = 9;
-            var history = await client.History.HourAsync(symbol, "BTC", 609, "Binance");
-            var liste = history.Data;
-            var candles = liste.Where(x => x.Close > 0).ToList();
+            var historyHour = await client.History.HourAsync(symbol, "BTC", 609, "Binance");
+            var data = historyHour.Data;
+            var candles = data.Where(x => x.Close > 0).ToList();
             var kalan = candles.Count % 4;
             candles = candles.Skip(kalan).ToList();
-            List<CandleData> listem4lu = new List<CandleData>();
-            var son = candles.Count / 4;
-            for (int i = 0; i < son; i++)
+            var liste4Saatlik = new List<CandleData>();
+            var son4Indeks = candles.Count / 4;
+            for (var i = 0; i < son4Indeks; i++)
             {
-                var temp = candles.Skip(i * 4).Take(4);
-                CandleData candleData = new CandleData();
-                foreach (var item in temp)
+                var mumlar = candles.Skip(i * 4).Take(4);
+                var candleData = new CandleData();
+                foreach (var mum in mumlar)
                 {
-
-                    candleData.VolumeFrom += item.VolumeFrom;
+                    candleData.VolumeFrom += mum.VolumeFrom;
                 }
-                candleData.Close = temp.Last().Close;
+                candleData.Close = mumlar.Last().Close;
                 //candleData.VolumeFrom = candleData.VolumeFrom / 4;
-                listem4lu.Add(candleData);
+                liste4Saatlik.Add(candleData);
             }
 
-
-            var volumesXcloses = listem4lu.Select(x => x.Close * x.VolumeFrom).ToList();
-            var closes = listem4lu.Select(x => x.Close).ToList();
-            var volumes = listem4lu.Select(x => x.VolumeFrom).ToList();
+            var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
+            //var closes = liste4Saatlik.Select(x => x.Close).ToList();
+            var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
             /*
                 fastMA = ema(volume*close, fastperiod)/ema(volume, fastperiod)
                 slowMA = ema(volume*close, slowperiod)/ema(volume, slowperiod)
@@ -213,24 +214,36 @@ namespace VWMACDV2.WinForms
                 signal = ema(vwmacd, signalperiod)    
                 hist= vwmacd - signal
              */
-            var fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => { return x / y; }).ToList();
-            var slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => { return x / y; }).ToList();
-            var vwmacd = fastEma.Zip(slowEma, (x, y) => { return x - y; }).ToList();
+            var fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
+            var slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
+            var vwmacd = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
             var signal = vwmacd.Ema(signalperiod).ToList();
-            var hist = vwmacd.Zip(signal, (x, y) => { return x - y; }).ToList();
+            var hist = vwmacd.Zip(signal, (x, y) => x - y).ToList();
             //signalLast = signal.Last();
             //vwmacdLast = vwmacd.Last();    
+
 
             if (kayitlar.ContainsKey(symbol))
                 kayitlar.Remove(symbol);
 
-            if (listBox1.Items.Contains(symbol))
-                listBox1.Items.Remove(symbol);
+            if (listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
+                listBox_SinyalAlinanlarHepsi.Items.Remove(symbol);
 
-            if (signal.Last().Value > vwmacd.Last().Value)
+        
+         
+            if (hist.Last().Value > 0)
             {
                 kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist));
-                listBox1.Items.Add(symbol);
+                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);
+
+                if (checkBox_Aktif.Checked)
+                {
+                    if (!listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
+                    {
+                        listBox_AnlikSinyalAlinanlar.Items.Add(symbol);
+                        MessageBox.Show("Anlık Yeni Coin Eklendi! Coin: " + symbol);
+                    }
+                }
             }
 
             //for (int i = 0; i < 152; i++)
@@ -252,10 +265,15 @@ namespace VWMACDV2.WinForms
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
-            if (listBox1.SelectedItem != null)
+            _coinGrafikCiz((ListBox)sender);
+        }
+
+        private void _coinGrafikCiz(ListBox sender)
+        {
+            if (sender.SelectedItem != null)
             {
-                var key = listBox1.SelectedItem.ToString();
-                MessageBox.Show(key);
+                var key = sender.SelectedItem.ToString();
+                //MessageBox.Show(key);
                 if (kayitlar.ContainsKey(key))
                 {
                     vwmacdList.Clear();
@@ -272,15 +290,23 @@ namespace VWMACDV2.WinForms
                         histListesineEkle(i, Convert.ToDouble(hist[i]));
                     }
 
-                    label1.Text = vwmacd.Last().Value.ToString();
-                    label2.Text = signal.Last().Value.ToString();
+                    label_Vwmacd.Text = vwmacd.Last().Value.ToString();
+                    label_Signal.Text = signal.Last().Value.ToString();
                 }
-
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void listBox_AnlikSinyalAlinanlar_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            _coinGrafikCiz((ListBox)sender);
+        }
+
+        private void listBox_SinyalAlinanlarHepsi_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (checkBox_Aktif.Checked)
+            {
+                _coinGrafikCiz((ListBox)sender);
+            }
         }
     }
 }
