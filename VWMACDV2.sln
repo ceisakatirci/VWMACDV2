@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VWMACDV2", "VWMACDV2\VWMACDV2.csproj", "{28502090-0468-4D1D-9257-AE490A12120A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VWMACDV2.WinForms", "VWMACDV2.WinForms\VWMACDV2.WinForms.csproj", "{CD4AC715-D378-48EE-AA32-2432595CC2A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28502090-0468-4D1D-9257-AE490A12120A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28502090-0468-4D1D-9257-AE490A12120A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28502090-0468-4D1D-9257-AE490A12120A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28502090-0468-4D1D-9257-AE490A12120A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD4AC715-D378-48EE-AA32-2432595CC2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD4AC715-D378-48EE-AA32-2432595CC2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD4AC715-D378-48EE-AA32-2432595CC2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD4AC715-D378-48EE-AA32-2432595CC2A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6720102-496A-4D0E-86B4-BC5CA7FFC4AC}
+	EndGlobalSection
+EndGlobal
