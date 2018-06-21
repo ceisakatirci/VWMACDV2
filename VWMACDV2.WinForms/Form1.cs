@@ -113,48 +113,14 @@ namespace VWMACDV2.WinForms
             //    Console.WriteLine(item.Time + " => " + item.Close + "  =>  " + item.VolumeFrom + " => " + item.VolumeTo);
             //}
 
-            Task.Run(() =>
+            using (var binanceClient = new BinanceClient())
             {
-                using (var binanceClient = new BinanceClient())
-                {
-                    binanceClient.GetAllPrices().Data
-                        .Where(x => x.Symbol.EndsWith("BTC"))
-                        .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
-                        .AsParallel()
-                        .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
-                        .ForAll(x => signalAl(x));
-                }
-
-            }).Wait();
-        }
-
-        private static void ekle(string sembol)
-        {
-            lock (locker)
-            {
-                //if (!signalGelenler.Contains(sembol))
-                //{
-                //    Console.WriteLine("Yeni Eklendi: " + sembol);
-                //    dataTable.Rows.Add(sembol);
-                //    Console.Beep(1000, 1000);
-                //}
-                //signalGelenler.Add(sembol);
-            }
-        }
-        private static void cikar(string sembol)
-        {
-            lock (locker)
-            {
-                //signalGelenler.Remove(sembol);
-
-                //for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
-                //{
-                //    DataRow dr = dataTable.Rows[i];
-                //    if (dr["Sembol"].ToString() == sembol)
-                //    {
-                //        dr.Delete();
-                //        break;
-                //    }
+                binanceClient.GetAllPrices().Data
+                    .Where(x => x.Symbol.EndsWith("BTC"))
+                    .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
+                    .AsParallel()
+                    .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+                    .ForAll(x => signalAl(x));
             }
         }
 
@@ -205,7 +171,7 @@ namespace VWMACDV2.WinForms
             }
 
             var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
-            //var closes = liste4Saatlik.Select(x => x.Close).ToList();
+            var closes = liste4Saatlik.Select(x => x.Close).ToList();
             var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
             /*
                 fastMA = ema(volume*close, fastperiod)/ema(volume, fastperiod)
@@ -219,9 +185,6 @@ namespace VWMACDV2.WinForms
             var vwmacd = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
             var signal = vwmacd.Ema(signalperiod).ToList();
             var hist = vwmacd.Zip(signal, (x, y) => x - y).ToList();
-            //signalLast = signal.Last();
-            //vwmacdLast = vwmacd.Last();    
-
 
             if (kayitlar.ContainsKey(symbol))
                 kayitlar.Remove(symbol);
@@ -229,38 +192,28 @@ namespace VWMACDV2.WinForms
             if (listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
                 listBox_SinyalAlinanlarHepsi.Items.Remove(symbol);
 
-        
-         
+            if (listBox_EMA144.Items.Contains(symbol))
+                listBox_EMA144.Items.Remove(symbol);
+
             if (hist.Last().Value > 0)
             {
                 kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist));
                 listBox_SinyalAlinanlarHepsi.Items.Add(symbol);
 
-                if (checkBox_Aktif.Checked)
+                if (((int)closes.Ema(144).Last()).Equals((int)closes.Last()))
                 {
-                    if (!listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
-                    {
-                        listBox_AnlikSinyalAlinanlar.Items.Add(symbol);
-                        MessageBox.Show("Anlık Yeni Coin Eklendi! Coin: " + symbol);
-                    }
+                    listBox_EMA144.Items.Add(symbol);
                 }
+
+                //if (checkBox_Aktif.Checked)
+                //{
+                //    if (!listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
+                //    {
+                //        listBox_AnlikSinyalAlinanlar.Items.Add(symbol);
+                //        MessageBox.Show("Anlık Yeni Coin Eklendi! Coin: " + symbol);
+                //    }
+                //}
             }
-
-            //for (int i = 0; i < 152; i++)
-            //{
-            //    vwmacdListesineEkle(i, Convert.ToDouble(vwmacd[i]));
-            //    signalListesineEkle(i, Convert.ToDouble(signal[i]));
-            //    histListesineEkle( i,Convert.ToDouble(hist[i]));
-            //}    
-
-            //if (vwmacd.Last() > signal.Last())
-            //{
-            //    ekle(symbol);
-            //}
-            //else
-            //{
-            //    cikar(symbol);
-            //}
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
@@ -308,5 +261,43 @@ namespace VWMACDV2.WinForms
                 _coinGrafikCiz((ListBox)sender);
             }
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            EpostaSorumlusu.Gonder("Test Amaçlı Gönderiyorum");
+        }
     }
 }
+
+
+
+
+//private static void ekle(string sembol)
+//{
+//    lock (locker)
+//    {
+//        //if (!signalGelenler.Contains(sembol))
+//        //{
+//        //    Console.WriteLine("Yeni Eklendi: " + sembol);
+//        //    dataTable.Rows.Add(sembol);
+//        //    Console.Beep(1000, 1000);
+//        //}
+//        //signalGelenler.Add(sembol);
+//    }
+//}
+//private static void cikar(string sembol)
+//{
+//    lock (locker)
+//    {
+//        //signalGelenler.Remove(sembol);
+
+//        //for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
+//        //{
+//        //    DataRow dr = dataTable.Rows[i];
+//        //    if (dr["Sembol"].ToString() == sembol)
+//        //    {
+//        //        dr.Delete();
+//        //        break;
+//        //    }
+//    }
+//}
