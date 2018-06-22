@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Trady.Analysis;
 using ZedGraph;
-
 namespace VWMACDV2.WinForms
 {
     public partial class Form1 : Form
@@ -25,31 +24,24 @@ namespace VWMACDV2.WinForms
         public Form1()
         {
             InitializeComponent();
-
             var myPane = zedGraphControl1.GraphPane;
             myPane.Title.Text = "VWMACDV2";
             myPane.XAxis.Title.Text = "4 Saatlik Arallıklar";
             myPane.YAxis.Title.Text = "Ema'lar";
-            myPane.XAxis.Scale.MaxAuto= true;
-
+            myPane.XAxis.Scale.MaxAuto = true;
             var Wmacd = myPane.AddCurve("Wmacd", vwmacdList, Color.Blue, SymbolType.Star);
             var Signal = myPane.AddCurve("Signal", signalList, Color.Red, SymbolType.Star);
             var Hist = zedGraphControl1.GraphPane.AddBar("Hist", histList, Color.Green);
-
             Hist.Bar.Fill = new Fill(Color.Red, Color.White, Color.Red);
             Wmacd.Symbol.Fill = new Fill(Color.White);
             Signal.Symbol.Fill = new Fill(Color.White);
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
             myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
         }
-
-
         CancellationTokenSource cts = new CancellationTokenSource();
-
         //protected override void OnLoad(EventArgs e)
         //{
         //    base.OnLoad(e);
-
         //    var t = new System.Timers.Timer { Interval = 1000 };
         //    t.Elapsed += (sender, eventargs) =>
         //    {
@@ -59,7 +51,6 @@ namespace VWMACDV2.WinForms
         //        }));
         //    };
         //    t.Start();
-
         //    Task.Run(() =>
         //    {
         //        var r = new Random();
@@ -69,17 +60,13 @@ namespace VWMACDV2.WinForms
         //            TimerEventProcessor(r.Next(-10, 10));
         //        };
         //    });
-
         //}
-
         //protected override void OnClosing(CancelEventArgs e)
         //{
         //    cts.Cancel();
         //    cts.Token.WaitHandle.WaitOne();
         //    base.OnClosing(e);
         //}
-
-
         //int x1 = 0;
         void vwmacdListesineEkle(double x, double y)
         {
@@ -102,7 +89,6 @@ namespace VWMACDV2.WinForms
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             //var client = new CryptoCompareClient();
@@ -112,7 +98,6 @@ namespace VWMACDV2.WinForms
             //{
             //    Console.WriteLine(item.Time + " => " + item.Close + "  =>  " + item.VolumeFrom + " => " + item.VolumeTo);
             //}
-
             using (var binanceClient = new BinanceClient())
             {
                 binanceClient.GetAllPrices().Data
@@ -123,7 +108,6 @@ namespace VWMACDV2.WinForms
                     .ForAll(x => signalAl(x));
             }
         }
-
         /*
                //@version=3
                //created by Buff DORMEIER
@@ -142,8 +126,6 @@ namespace VWMACDV2.WinForms
                //plot(hist, color=green, linewidth=4, style=histogram)
                plot(0, color=black)      
            */
-
-
         private async Task signalAl(string symbol)
         {
             var client = new CryptoCompareClient();
@@ -169,7 +151,6 @@ namespace VWMACDV2.WinForms
                 //candleData.VolumeFrom = candleData.VolumeFrom / 4;
                 liste4Saatlik.Add(candleData);
             }
-
             var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
             var closes = liste4Saatlik.Select(x => (Nullable<decimal>)x.Close).ToList();
             var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
@@ -185,22 +166,16 @@ namespace VWMACDV2.WinForms
             var vwmacd = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
             var signal = vwmacd.Ema(signalperiod).ToList();
             var hist = vwmacd.Zip(signal, (x, y) => x - y).ToList();
-
             if (kayitlar.ContainsKey(symbol))
                 kayitlar.Remove(symbol);
-
             if (listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
                 listBox_SinyalAlinanlarHepsi.Items.Remove(symbol);
-
             if (listBox_EMA144.Items.Contains(symbol))
                 listBox_EMA144.Items.Remove(symbol);
-         
             if (hist.Last().Value > 0)
             {
                 kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist, closes));
-                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);           
-
-
+                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);
                 //if (checkBox_Aktif.Checked)
                 //{
                 //    if (!listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
@@ -210,42 +185,31 @@ namespace VWMACDV2.WinForms
                 //    }
                 //}
             }
-
-
             var ema = closes.Ema(144).Last();
             var last = closes.Last();
-
             if (araliktaMi(ema, last))
             {
                 listBox_EMA144.Items.Add("EMA144-" + symbol);
             }
-
             var sma = closes.Sma(200).Last();
-
             if (araliktaMi(sma, last))
             {
                 listBox_EMA144.Items.Add("SMA200-" + symbol);
             }
-
             sma = closes.Sma(50).Last();
-
             if (sma.Equals(last))
             {
                 listBox_EMA144.Items.Add("SMA50-" + symbol);
             }
-
         }
-
         bool araliktaMi(decimal? a, decimal? b)
         {
-            return a <= b && b <= a * 1.1m;
+            return a * 0.99m <= b && b <= a * 1.01m;
         }
-
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
             _coinGrafikCiz((ListBox)sender);
         }
-
         private void _coinGrafikCiz(ListBox sender)
         {
             if (sender.SelectedItem != null)
@@ -272,31 +236,20 @@ namespace VWMACDV2.WinForms
                         signalListesineEkle(i, Convert.ToDouble(signal[i]));
                         histListesineEkle(i, Convert.ToDouble(hist[i]));
                     }
-
-
-              
-
-
-
-
                     //if (((int).Equals((int)closes.Last()))
                     //{
                     //    label_Vwmacd.Text = ((int)closes.Ema(144).Last()).ToString();
                     //    label_Signal.Text = ((int)closes.Last()).ToString();
                     //}
-
-
                     //label_Vwmacd.Text = vwmacd.Last().Value.ToString();
                     //label_Signal.Text = signal.Last().Value.ToString();
                 }
             }
         }
-
         private void listBox_AnlikSinyalAlinanlar_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             _coinGrafikCiz((ListBox)sender);
         }
-
         private void listBox_SinyalAlinanlarHepsi_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (checkBox_Aktif.Checked)
@@ -304,17 +257,12 @@ namespace VWMACDV2.WinForms
                 _coinGrafikCiz((ListBox)sender);
             }
         }
-
         private void button1_Click_1(object sender, EventArgs e)
         {
             EpostaSorumlusu.Gonder("Test Amaçlı Gönderiyorum");
         }
     }
 }
-
-
-
-
 //private static void ekle(string sembol)
 //{
 //    lock (locker)
@@ -333,7 +281,6 @@ namespace VWMACDV2.WinForms
 //    lock (locker)
 //    {
 //        //signalGelenler.Remove(sembol);
-
 //        //for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
 //        //{
 //        //    DataRow dr = dataTable.Rows[i];
