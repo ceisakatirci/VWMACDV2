@@ -49,11 +49,4 @@ namespace VWMACDV2.WinForms
         }
     }
 
-    class MyClass : Collection<MyClass>
-    {
-        public MyClass()
-        {
-
-        }
-    }
 }
