@@ -175,7 +175,9 @@ namespace VWMACDV2.WinForms
             if (hist.Last().Value > 0)
             {
                 kayitlar.Add(symbol, new Tuple<List<decimal?>, List<decimal?>, List<decimal?>, List<decimal?>>(vwmacd, signal, hist, closes));
-                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);
+                listBox_SinyalAlinanlarHepsi.Items.Add(symbol);           
+
+
                 //if (checkBox_Aktif.Checked)
                 //{
                 //    if (!listBox_SinyalAlinanlarHepsi.Items.Contains(symbol))
@@ -185,22 +187,30 @@ namespace VWMACDV2.WinForms
                 //    }
                 //}
             }
+
+
             var ema = closes.Ema(144).Last();
             var last = closes.Last();
+
             if (araliktaMi(ema, last))
             {
                 listBox_EMA144.Items.Add("EMA144-" + symbol);
             }
+
             var sma = closes.Sma(200).Last();
+
             if (araliktaMi(sma, last))
             {
                 listBox_EMA144.Items.Add("SMA200-" + symbol);
             }
+
             sma = closes.Sma(50).Last();
+
             if (sma.Equals(last))
             {
                 listBox_EMA144.Items.Add("SMA50-" + symbol);
             }
+
         }
         bool araliktaMi(decimal? a, decimal? b)
         {
