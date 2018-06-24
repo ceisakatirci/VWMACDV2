@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace VWMACDV2.WinForms
 {
+    [Serializable]
     public class Listeler
     {
         public List<decimal?> Vwmacd { get; set; }
         public List<decimal?> Signal { get; set; }
         public List<decimal?> Hist { get; set; }
         public List<decimal?> Closes { get; set; }
+        public List<decimal?> Wma { get; set; }
+        public List<decimal?> Ema144 { get; set; }
+        public List<decimal?> Sma50 { get; set; }
+        public List<decimal?> Sma200 { get; set; }
+        public List<decimal?> Sma21 { get; set; }
     }
 }

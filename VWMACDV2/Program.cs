@@ -13,6 +13,54 @@ using Trady.Analysis;
 
 namespace VWMACDV2
 {
+    static class MyClass
+    {
+        public static List<decimal> WeighteedMovingAverage(this List<decimal> data, int periyot)
+        {
+            var agirlikliHareketliOrtalamalar = new List<decimal>();
+            var dataKopya = new List<decimal>(data);
+            var p = (periyot * (periyot + 1) / 2);
+            //(Price X weighting factor) + (Price previous period X weighting factor-1)...
+            //((90 x (4/10)) + (89 x (3/10)) + (88 x (2/10)) + (89 x (1/10)) = 36 + 26.7 + 17.6 + 8.9 = 89.2
+            if (!dataKopya.Any())
+            {
+                return agirlikliHareketliOrtalamalar;
+            }
+            dataKopya.Reverse();
+            var limit = dataKopya.Count();
+            var sonEleman = dataKopya[limit - 1];
+            for (int i = 0; i < limit; i++)
+            {
+                var temp = dataKopya.Skip(i).Take(periyot).ToList();
+                if (!temp.Any())
+                    break;               
+
+                var count = temp.Count();
+                if (count < periyot)
+                {
+                    var k = periyot - count;
+                    for (int j = 0; j <k; j++)
+                    {
+                        temp.Add(sonEleman);
+                    }
+                }
+
+
+                List<decimal> tempList = new List<decimal>();
+                for (int j = 0; j < periyot; j++)
+                {
+                    var g = (periyot - j);
+                    var h = temp[j];
+                    var t = (h * g);
+                    tempList.Add(t);
+                }
+               
+                var s = tempList.Sum();
+                agirlikliHareketliOrtalamalar.Add(s / p);
+            }
+            return agirlikliHareketliOrtalamalar;
+        }
+    }
     class Program
     {
         /*
@@ -97,26 +145,38 @@ namespace VWMACDV2
 
         static void Main(string[] args)
         {
-            _zamanDoldugundaCalistir(null, null);
-            var aralik = 60 * 60 * 1000;
-            var t = new System.Timers.Timer { Interval = aralik };
-            t.Elapsed += _zamanDoldugundaCalistir;
-            t.Start();
-            var i = 0;
-            var cik = true;
-            while (cik)
+
+            var temp = new decimal[] { 90m, 80m, 70m, 85m, 56m, 80m, 70m, 85m }.ToList().WeighteedMovingAverage(3)
+                    .WeighteedMovingAverage(5)
+                    .WeighteedMovingAverage(8);
+                    //.WeighteedMovingAverage(13)
+                    //.WeighteedMovingAverage(21)
+                    //.WeighteedMovingAverage(34);
+            foreach (var item in temp)
             {
-                Console.WriteLine("Çalışıyor.. " + ++i);
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                Task.Run(() => {
-                    if (Console.ReadLine().Equals("Q"))
-                    {
-                        dataTable.WriteXml("SignalGelenler.xlm");
-                        cik = false;
-                    }
-                });            
+                Console.WriteLine(item);
             }
-           
+            Console.WriteLine(temp.Count);
+            //_zamanDoldugundaCalistir(null, null);
+            //var aralik = 60 * 60 * 1000;
+            //var t = new System.Timers.Timer { Interval = aralik };
+            //t.Elapsed += _zamanDoldugundaCalistir;
+            //t.Start();
+            //var i = 0;
+            //var cik = true;
+            //while (cik)
+            //{
+            //    Console.WriteLine("Çalışıyor.. " + ++i);
+            //    Thread.Sleep(TimeSpan.FromSeconds(1));
+            //    Task.Run(() => {
+            //        if (Console.ReadLine().Equals("Q"))
+            //        {
+            //            dataTable.WriteXml("SignalGelenler.xlm");
+            //            cik = false;
+            //        }
+            //    });            
+            //}
+
         }
 
         private static async Task signalAl(string symbol="QKC")
