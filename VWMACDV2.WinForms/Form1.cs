@@ -30,7 +30,7 @@ namespace VWMACDV2.WinForms
         Dictionary<string, Listeler> kayitlar = new Dictionary<string, Listeler>();
         private long sayac;
         private long sinyalAdet;
-        private long digerAdet; 
+        private long digerAdet;
         private static readonly object lockerKayitlar = new object();
         public Form1()
         {
@@ -69,8 +69,6 @@ namespace VWMACDV2.WinForms
             myPane3.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
         }
         CancellationTokenSource cts = new CancellationTokenSource();
-
-
         //protected override void OnLoad(EventArgs e)
         //{
         //    base.OnLoad(e);
@@ -121,7 +119,6 @@ namespace VWMACDV2.WinForms
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
         }
-
         void listeyeEkle(RollingPointPairList rollingPoint, ZedGraphControl zedGraph, double x, double y)
         {
             //x1++; c++;
@@ -129,7 +126,6 @@ namespace VWMACDV2.WinForms
             zedGraph.AxisChange();
             zedGraph.Invalidate();
         }
-
         void closesListesineEkle(double x, double y)
         {
             //x1++; c++;
@@ -137,7 +133,6 @@ namespace VWMACDV2.WinForms
             zedGraphControl2.AxisChange();
             zedGraphControl2.Invalidate();
         }
-
         void wmaListesineEkle(double x, double y)
         {
             //x1++; c++;
@@ -163,12 +158,10 @@ namespace VWMACDV2.WinForms
                         .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
                         .AsParallel()
                         .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
-                        .ForAll(x => signalAl(x));
+                        .ForAll(x => verileriAnalizEt(x));
                 }
-            });           
+            });
         }
-
-
         /*
                //@version=3
                //created by Buff DORMEIER
@@ -187,7 +180,7 @@ namespace VWMACDV2.WinForms
                //plot(hist, color=green, linewidth=4, style=histogram)
                plot(0, color=black)      
            */
-        private void signalAl(string sembol)
+        private void verileriAnalizEt(string sembol)
         {
             var adim = 0;
             try
@@ -253,6 +246,7 @@ namespace VWMACDV2.WinForms
                 var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
                 adim = 30;
                 var closes = liste4Saatlik.Select(x => (Nullable<decimal>)x.Close).ToList();
+                var closesCount = closes.Count;
                 adim = 31;
                 var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
                 adim = 32;
@@ -269,10 +263,6 @@ namespace VWMACDV2.WinForms
                 var listeler = new Listeler();
                 adim = 38;
                 adim = 39;
-                //kayitlar[sembol].Closes = closes;          
-                //kayitlar[sembol].Vwmacd = vwmacd;                
-                //kayitlar[sembol].Signal = signal;                
-                //kayitlar[sembol].Hist = hist;
                 listeler.Closes = closes;
                 adim = 40;
                 listeler.Vwmacd = vwmacd;
@@ -281,15 +271,6 @@ namespace VWMACDV2.WinForms
                 adim = 42;
                 listeler.Hist = hist;
                 adim = 43;
-                ////@version=3
-                //study("MavilimW", overlay=true)
-                //M1= wma(close, 3)
-                //M2= wma(M1, 5)
-                //M3= wma(M2, 8)
-                //M4= wma(M3, 13)
-                //M5= wma(M4, 21)
-                //MAVW= wma(M5, 34)
-                //plot(MAVW, color=blue, linewidth=2)
                 listeler.Wma = closes
                     .WeighteedMovingAverage(3)
                     .WeighteedMovingAverage(5)
@@ -298,6 +279,37 @@ namespace VWMACDV2.WinForms
                     .WeighteedMovingAverage(21)
                     .WeighteedMovingAverage(34);
                 adim = 44;
+
+                if (closesCount >= 144)
+                {                   
+                    //closes = closes.Where(x => x.HasValue && x.Value > 0).ToList();
+                    //var t = ema144.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();                
+                    listeler.Ema144 = closes.Ema(144).ToList();
+                    //for (int i = 0; i < t.Count; i++)
+                    //{
+                    //    listeyeEkle(closeEma144Listesi, zedGraphControl3, i, t[i]);
+                    //}
+                }
+                if (closesCount >= 50)
+                {
+                    listeler.Sma50= closes.Sma(50).ToList();
+                    //var sma50 = closes.Sma(50);
+                    //var y = sma50.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
+                    //for (int i = 0; i < y.Count; i++)
+                    //{
+                    //    listeyeEkle(closeSma50Listesi, zedGraphControl3, i, y[i]);
+                    //}
+                }
+                if (closesCount >= 200)
+                {
+                    listeler.Sma200 = closes.Sma(200).ToList();
+                    //var sma200 = closes.Sma(200);
+                    //var k = sma200.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
+                    //for (int i = 0; i < k.Count; i++)
+                    //{
+                    //    listeyeEkle(closeSma200Listesi, zedGraphControl3, i, k[i]);
+                    //}
+                }
                 kayilardaYoksaEkleVarsaGuncelle(sembol, listeler);
                 adim = 45;
                 listBoxlariDoldur(sembol);
@@ -328,30 +340,24 @@ namespace VWMACDV2.WinForms
                 }
             }
         }
-
         private void listBoxlariDoldur(string sembol)
         {
-            if (!kayitlar.ContainsKey(sembol))            
+            if (!kayitlar.ContainsKey(sembol))
                 return;
-            
             var kayit = kayitlar[sembol];
-
             label_KayitlarAdet.InvokeIfRequired((MethodInvoker)delegate ()
             {
                 label_KayitlarAdet.Text = labelBaslangicMetinAl(label_KayitlarAdet.Text) + kayitlar.Count;
             });
-
             var closes = kayit.Closes;
             var signal = kayit.Signal;
             var vwmacd = kayit.Vwmacd;
             var hist = kayit.Hist;
             var wma = kayit.Wma;
             var closesCount = closes.Count;
-
             if (!closes.Any())
                 return;
             var last = closes.Last();
-
             if (wma.Any())
             {
                 if (araliktaMi(wma.Last(), last))
@@ -362,9 +368,8 @@ namespace VWMACDV2.WinForms
                     });
                 }
             }
-
             if (hist.Any() && signal.Any() && vwmacd.Any())
-            {              
+            {
                 if (hist.Last().Value > 0)
                 {
                     listBox_SinyalAlinanlar.InvokeIfRequired((MethodInvoker)delegate ()
@@ -389,52 +394,56 @@ namespace VWMACDV2.WinForms
                 }
             }
 
-            var ema144 = closes.Ema(144).Last();
+            if (kayit.Ema144 != null && kayit.Ema144.Any())
+            {
+                if (araliktaMi(kayit.Ema144.Last(), last))
+                {
+                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
+                    {
+                        listBox_Ortalamalar.Items.Add("EMA144-" + sembol);
+                    });
+                }
+            }
 
+            if (kayit.Sma200 != null && kayit.Sma200.Any())
+            {
+                if (araliktaMi(kayit.Sma200.Last(), last))
+                {
+                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
+                    {
+                        listBox_Ortalamalar.Items.Add("SMA200-" + sembol);
+                    });
+                }
+            }
 
+            if (kayit.Sma50 != null && kayit.Sma50.Any())
+            {
+                if (araliktaMi(kayit.Sma50.Last(), last))
+                {
+                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
+                    {
+                        listBox_Ortalamalar.Items.Add("SMA50-" + sembol);
+                    });
+                }
+            }
 
+            //var ema144 = closes.Ema(144).Last();
             label_IslemeAlinanCoinAdedi.InvokeIfRequired((MethodInvoker)delegate ()
             {
                 label_IslemeAlinanCoinAdedi.Text = labelBaslangicMetinAl(label_IslemeAlinanCoinAdedi.Text) + (Interlocked.Increment(ref sayac)).ToString();
-            });
-
-            if (araliktaMi(ema144, last))
-            {
-                listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                {
-                    listBox_Ortalamalar.Items.Add("EMA144-" + sembol);
-                });
-            }
-      
-            var sma = closes.Sma(200).Last();
-            if (araliktaMi(sma, last))
-            {
-                listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                {
-                    listBox_Ortalamalar.Items.Add("SMA200-" + sembol);
-                });
-            }
-            sma = closes.Sma(50).Last();
-            if (sma.Equals(last))
-            {
-                listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                {
-                    listBox_Ortalamalar.Items.Add("SMA50-" + sembol);
-                });
-            }         
-
+            });        
+         
+        
         }
-
         private string labelBaslangicMetinAl(string str)
         {
             if (string.IsNullOrWhiteSpace(str) || (str.IndexOf(':') < 0))
             {
                 return string.Empty;
             }
-            var temp= str.Remove(str.IndexOf(':')).Trim() + ": ";
+            var temp = str.Remove(str.IndexOf(':')).Trim() + ": ";
             return temp;
         }
-
         bool araliktaMi(decimal? limit, decimal? deger)
         {
             return limit * 0.97m <= deger && deger <= limit * 1.03m;
@@ -458,7 +467,7 @@ namespace VWMACDV2.WinForms
             if (key.Contains("-"))
                 key = key.Substring(key.IndexOf('-') + 1);
             if (kayitlar.ContainsKey(key))
-            {       
+            {
                 var closes = kayitlar[key].Closes;
                 closes = closes.Where(x => x > 0).ToList();
                 if (!closes.Any())
@@ -467,6 +476,9 @@ namespace VWMACDV2.WinForms
                 var count = vwmacd.Count;
                 var signal = kayitlar[key].Signal;
                 var hist = kayitlar[key].Hist;
+                var ema144 = kayitlar[key].Ema144;
+                var sma50 = kayitlar[key].Sma50;
+                var sma200 = kayitlar[key].Sma200;
                 vwmacdList.Clear();
                 signalList.Clear();
                 histList.Clear();
@@ -489,37 +501,28 @@ namespace VWMACDV2.WinForms
                 {
                     wmaListesineEkle(i, Convert.ToDouble(wma[i]));
                 }
-                if (closesCount >= 144)
+                if (sma200!=null && sma200.Any())
                 {
-                    var ema144 = closes.Ema(144);
-                    //closes = closes.Where(x => x.HasValue && x.Value > 0).ToList();
-
-                    var t = ema144.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
-                    for (int i = 0; i < t.Count; i++)
+                    for (int i = 0; i < sma200.Count; i++)
                     {
-                        listeyeEkle(closeEma144Listesi, zedGraphControl3, i, t[i]);
-                    }
-
-                }
-                if (closesCount >= 50)
-                {
-                    var sma50 = closes.Sma(50);
-
-                    var y = sma50.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
-                    for (int i = 0; i < y.Count; i++)
-                    {
-                        listeyeEkle(closeSma50Listesi, zedGraphControl3, i, y[i]);
+                        listeyeEkle(closeSma200Listesi, zedGraphControl3, i,(double)sma200[i]);
                     }
                 }
-                if (closesCount >= 200)
+                if (sma50 != null && sma50.Any())
                 {
-                    var sma200 = closes.Sma(200);
-                    var k = sma200.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
-                    for (int i = 0; i < k.Count; i++)
+                    for (int i = 0; i < sma50.Count; i++)
                     {
-                        listeyeEkle(closeSma200Listesi, zedGraphControl3, i, k[i]);
+                        listeyeEkle(closeSma50Listesi, zedGraphControl3, i, (double)sma50[i]);
                     }
                 }
+                if (ema144 != null && ema144.Any())
+                {
+                    for (int i = 0; i < ema144.Count; i++)
+                    {
+                        listeyeEkle(closeEma144Listesi, zedGraphControl3, i, (double)ema144[i]);
+                    }
+                }
+
             }
         }
         private void listBox_AnlikSinyalAlinanlar_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -560,12 +563,9 @@ namespace VWMACDV2.WinForms
         {
             _listedenSecilenCoiniAl(sender);
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
-
         }
-
         private void button_Temizle_Click(object sender, EventArgs e)
         {
             listBox_SinyalAlinanlar.Items.Clear();
@@ -573,21 +573,16 @@ namespace VWMACDV2.WinForms
             listBox_Ortalamalar.Items.Clear();
             kayitlar.Clear();
         }
-
         private void button_Kaydet_Click(object sender, EventArgs e)
         {
             var dosyaAdi = "kayitlar.binary";
-            if (File.Exists(dosyaAdi))            
+            if (File.Exists(dosyaAdi))
                 File.Delete(dosyaAdi);
-
-            if (!kayitlar.Any())            
-                MessageBox.Show("Kayit Yok!");            
-
+            if (!kayitlar.Any())
+                MessageBox.Show("Kayit Yok!");
             File.WriteAllBytes(dosyaAdi, kayitlar.Serialize());
-
             MessageBox.Show("Kaydedildi");
         }
-
         private void button_Yukle_Click(object sender, EventArgs e)
         {
             var dosyaAdi = "kayitlar.binary";
@@ -704,7 +699,6 @@ namespace VWMACDV2.WinForms
 //                listBox_Ortalamalar.Items.Add("SMA50-" + sembol);
 //            });
 //        }
-
 //        ////@version=3
 //        //study("MavilimW", overlay=true)
 //        //M1= wma(close, 3)
@@ -714,8 +708,6 @@ namespace VWMACDV2.WinForms
 //        //M5= wma(M4, 21)
 //        //MAVW= wma(M5, 34)
 //        //plot(MAVW, color=blue, linewidth=2)              
-
-
 //        if (araliktaMi(wma.Last(), last))
 //        {
 //            listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
@@ -723,9 +715,6 @@ namespace VWMACDV2.WinForms
 //                listBox_Ortalamalar.Items.Add("Mavilim-" + sembol);
 //            });
 //        }
-
-
-
 //        if (hist.Last().Value > 0)
 //        {
 //            listBox_SinyalAlinanlar.InvokeIfRequired((MethodInvoker)delegate ()
@@ -749,7 +738,6 @@ namespace VWMACDV2.WinForms
 //            });
 //        }
 //    }
-
 //    }
 //catch (Exception ex)
 //{
@@ -777,4 +765,3 @@ namespace VWMACDV2.WinForms
 //    }
 //}
 //});          
-
