@@ -18,7 +18,7 @@ namespace VWMACDV2.WinForms
 {
     public partial class Form1 : Form
     {
-        private static int _limit = 2584;
+        private static int _limit = 610;
         private readonly RollingPointPairList vwmacdList = new RollingPointPairList(_limit);
         private readonly RollingPointPairList signalList = new RollingPointPairList(_limit);
         private readonly RollingPointPairList histList = new RollingPointPairList(_limit);
@@ -161,7 +161,6 @@ namespace VWMACDV2.WinForms
                     label_BinanceClientCoinAdet.LabeleYazdir(enumerable.Count().ToString());
 
                     enumerable
-                        .Take(1)
                         .AsParallel()
                         .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
                         .ForAll(verileriAnalizEt);
@@ -336,14 +335,14 @@ namespace VWMACDV2.WinForms
             listeler.Vwmacd4Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
             listeler.Signal4Saatlik = listeler.Vwmacd4Saatlik.Ema(signalperiod).ToList();
             listeler.Hist4Saatlik = listeler.Vwmacd4Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
-            closes = listeler.Closes1Saatlik.Where(x=>x>0).ToList();
-            volumes = listeler.Volumes1Saatlik.Where(x => x > 0).ToList();
-            volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
-            fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
-            slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
-            listeler.Vwmacd1Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
-            listeler.Signal1Saatlik = listeler.Vwmacd1Saatlik.Ema(signalperiod).ToList();
-            listeler.Hist1Saatlik = listeler.Vwmacd1Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
+            //closes = listeler.Closes1Saatlik.Where(x=>x>0).ToList();
+            //volumes = listeler.Volumes1Saatlik.Where(x => x > 0).ToList();
+            //volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
+            //fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
+            //slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
+            //listeler.Vwmacd1Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
+            //listeler.Signal1Saatlik = listeler.Vwmacd1Saatlik.Ema(signalperiod).ToList();
+            //listeler.Hist1Saatlik = listeler.Vwmacd1Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
         }
 
         private static string ictenDisaHatalariAl(Exception ex)
@@ -520,21 +519,21 @@ namespace VWMACDV2.WinForms
                 {
                     for (int i = 0; i < sma200.Count; i++)
                     {
-                        listeyeEkle(closeSma200Listesi, zedGraphControl3, i,(double)sma200[i]);
+                        listeyeEkle(closeSma200Listesi, zedGraphControl3, i,(double)(sma200[i]??0.0m));
                     }
                 }
                 if (sma50 != null && sma50.Any())
                 {
                     for (int i = 0; i < sma50.Count; i++)
                     {
-                        listeyeEkle(closeSma50Listesi, zedGraphControl3, i, (double)sma50[i]);
+                        listeyeEkle(closeSma50Listesi, zedGraphControl3, i, (double)(sma50[i] ?? 0.0m));
                     }
                 }
                 if (ema144 != null && ema144.Any())
                 {
                     for (int i = 0; i < ema144.Count; i++)
                     {
-                        listeyeEkle(closeEma144Listesi, zedGraphControl3, i, (double)ema144[i]);
+                        listeyeEkle(closeEma144Listesi, zedGraphControl3, i, (double)(ema144[i] ?? 0.0m));
                     }
                 }
 
