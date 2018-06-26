@@ -12,7 +12,8 @@ namespace VWMACDV2.WinForms
         public List<decimal?> Vwmacd { get; set; }
         public List<decimal?> Signal { get; set; }
         public List<decimal?> Hist { get; set; }
-        public List<decimal?> Closes { get; set; }
+        public List<decimal> Closes4Saatlik { get; set; }
+        public IEnumerable<decimal> Closes1Saatlik { get; set; }
         public List<decimal?> Wma { get; set; }
         public List<decimal?> Ema144 { get; set; }
         public List<decimal?> Sma50 { get; set; }

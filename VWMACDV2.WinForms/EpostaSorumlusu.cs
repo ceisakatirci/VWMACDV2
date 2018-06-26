@@ -89,6 +89,7 @@ namespace VWMACDV2.WinForms
     }
     static class MyClass
     {
+        
         public static void InvokeIfRequired(this ISynchronizeInvoke obj, MethodInvoker action)
         {
             if (obj.InvokeRequired)
@@ -101,6 +102,7 @@ namespace VWMACDV2.WinForms
                 action();
             }
         }
+
 
         private static string labelBaslangicMetinAl(string str)
         {
@@ -116,17 +118,34 @@ namespace VWMACDV2.WinForms
 
         public static void LabeleYazdir(this Label label,string str)
         {
-
             label.InvokeIfRequired((MethodInvoker)delegate ()
             {
                 label.Text = labelBaslangicMetinAl(label.Text) + str;
             });
         }
-
-        public static List<decimal?> WeighteedMovingAverage(this List<decimal?> data, int periyot)
+       public static void ListBoxStringEkle(this ListBox listBox, string temp)
         {
-            var agirlikliHareketliOrtalamalar = new List<decimal?>();
-            var dataKopya = new List<decimal?>(data);
+            if (listBox.InvokeRequired)
+            {
+                listBox.InvokeIfRequired(new MethodInvoker(delegate
+                {
+                    listBox.Items.Add(temp);
+                    listBox.TopIndex = Math.Max(listBox.Items.Count - listBox.ClientSize.Height / listBox.ItemHeight + 1, 0);
+                    listBox.Refresh();
+                }));
+            }
+            else
+            {
+                listBox.Items.Add(temp);
+                listBox.TopIndex = Math.Max(listBox.Items.Count - listBox.ClientSize.Height / listBox.ItemHeight + 1, 0);
+                listBox.Refresh();
+            }
+        }
+
+        public static List<decimal> WeighteedMovingAverage(this List<decimal> data, int periyot)
+        {
+            var agirlikliHareketliOrtalamalar = new List<decimal>();
+            var dataKopya = new List<decimal>(data);
             var p = (periyot * (periyot + 1) / 2);
             //(Price X weighting factor) + (Price previous period X weighting factor-1)...
             //((90 x (4/10)) + (89 x (3/10)) + (88 x (2/10)) + (89 x (1/10)) = 36 + 26.7 + 17.6 + 8.9 = 89.2
@@ -154,7 +173,7 @@ namespace VWMACDV2.WinForms
                 }
 
 
-                List<decimal?> tempList = new List<decimal?>();
+                List<decimal> tempList = new List<decimal>();
                 for (int j = 0; j < periyot; j++)
                 {
                     var g = (periyot - j);

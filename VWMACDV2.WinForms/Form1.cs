@@ -197,31 +197,43 @@ namespace VWMACDV2.WinForms
                 adim = 3;
                 var signalperiod = 9;
                 adim = 4;
-                var task = client.History.HourAsync(sembol, "BTC", _limit - 1, "Binance");
-                adim = 5;
-                task.Wait();
-                adim = 6;
-                var historyHour = task.Result;
+                HistoryResponse historyHour;
+                try
+                {
+                    var task = client.History.HourAsync(sembol, "BTC", _limit - 1, "Binance");
+                    adim = 5;
+                    task.Wait();
+                    adim = 6;
+                    historyHour = task.Result;
+                }
+                catch (Exception ex)
+                {
+                    listBox_Hatalar.ListBoxStringEkle(sembol + "Coini Binance da Mevcut Değil: " + ictenDisaHatalariAl(ex));
+                    return;
+                }             
                 adim = 7;
                 var data = historyHour.Data;
                 adim = 8;
                 var candles = data.Where(x => x.Close > 0).ToList();
                 adim = 9;
                 adim = 10;
-                //if (!candles.Any())
-                //{
-                //    adim = 11;
-                //    MessageBox.Show("Hiç Mum Yok, Coin: " + sembol);
-                //    adim = 12;
-                //    return;
-                //}
+                var listeler = new Listeler();
+                listeler.Closes1Saatlik = candles.Select(x => x.Close);
+                if (!candles.Any())
+                {
+                    adim = 11;
+                    MessageBox.Show("Hiç Mum Yok, Coin: " + sembol);
+                    adim = 12;
+                    return;
+                }
                 adim = 13;
                 adim = 14;
                 var kalan = candles.Count % 4;
                 adim = 15;
                 candles = candles.Skip(kalan).ToList();
                 adim = 16;
-                var liste4Saatlik = new List<CandleData>();
+                var liste4Saatlik = new List<decimal>();
+                var liste4SaatlikHacim = new List<decimal>();
                 adim = 17;
                 var son4Indeks = candles.Count / 4;
                 adim = 18;
@@ -243,16 +255,18 @@ namespace VWMACDV2.WinForms
                     adim = 26;
                     candleData.Close = mumlar.Last().Close;
                     adim = 27;
-                    liste4Saatlik.Add(candleData);
+                    liste4Saatlik.Add(candleData.Close);
+                    liste4SaatlikHacim.Add(candleData.VolumeFrom);
                     adim = 28;
                 }
                 adim = 29;
-                var volumesXcloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
-                adim = 30;
-                var closes = liste4Saatlik.Select(x => (Nullable<decimal>)x.Close).ToList();
+                var closes = liste4Saatlik;
+                var volumes = liste4SaatlikHacim;
                 var closesCount = closes.Count;
+                //var volumesXCloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
+                var volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
+                adim = 30;
                 adim = 31;
-                var volumes = liste4Saatlik.Select(x => x.VolumeFrom).ToList();
                 adim = 32;
                 var fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
                 adim = 33;
@@ -264,10 +278,9 @@ namespace VWMACDV2.WinForms
                 adim = 36;
                 var hist = vwmacd.Zip(signal, (x, y) => x - y).ToList();
                 adim = 37;
-                var listeler = new Listeler();
                 adim = 38;
                 adim = 39;
-                listeler.Closes = closes;
+                listeler.Closes4Saatlik = closes;
                 adim = 40;
                 listeler.Vwmacd = vwmacd;
                 adim = 41;
@@ -321,29 +334,24 @@ namespace VWMACDV2.WinForms
             catch (Exception ex)
             {
                 var temp = "Adım: " + adim.ToString();
-                temp += ", " + ex.Message;
-                while (ex.InnerException != null)
-                {
-                    ex = ex.InnerException;
-                    temp += ", " + ex.Message;
-                }
-                if (listBox_Hatalar.InvokeRequired)
-                {
-                    listBox_Hatalar.InvokeIfRequired(new MethodInvoker(delegate
-                    {
-                        listBox_Hatalar.Items.Add(temp);
-                        listBox_Hatalar.TopIndex = Math.Max(listBox_Hatalar.Items.Count - listBox_Hatalar.ClientSize.Height / listBox_Hatalar.ItemHeight + 1, 0);
-                        listBox_Hatalar.Refresh();
-                    }));
-                }
-                else
-                {
-                    listBox_Hatalar.Items.Add(temp);
-                    listBox_Hatalar.TopIndex = Math.Max(listBox_Hatalar.Items.Count - listBox_Hatalar.ClientSize.Height / listBox_Hatalar.ItemHeight + 1, 0);
-                    listBox_Hatalar.Refresh();
-                }
+                temp += ", ";
+                string hata = ictenDisaHatalariAl(ex);
+                listBox_Hatalar.ListBoxStringEkle(temp + hata);
             }
         }
+
+        private static string ictenDisaHatalariAl(Exception ex)
+        {
+            var hata = ex.Message;
+            while (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+                hata += ", " + ex.Message;
+            }
+            return hata;
+        }
+
+
         private void listBoxlariDoldur(string sembol)
         {
             if (!kayitlar.ContainsKey(sembol))
@@ -353,7 +361,7 @@ namespace VWMACDV2.WinForms
             {
                 label_KayitlarAdet.Text = labelBaslangicMetinAl(label_KayitlarAdet.Text) + kayitlar.Count;
             });
-            var closes = kayit.Closes;
+            var closes = kayit.Closes4Saatlik;
             var signal = kayit.Signal;
             var vwmacd = kayit.Vwmacd;
             var hist = kayit.Hist;
@@ -469,7 +477,7 @@ namespace VWMACDV2.WinForms
                 key = key.Substring(key.IndexOf('-') + 1);
             if (kayitlar.ContainsKey(key))
             {
-                var closes = kayitlar[key].Closes;
+                var closes = kayitlar[key].Closes4Saatlik;
                 closes = closes.Where(x => x > 0).ToList();
                 if (!closes.Any())
                     return;
