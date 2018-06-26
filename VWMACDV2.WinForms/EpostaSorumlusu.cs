@@ -102,6 +102,27 @@ namespace VWMACDV2.WinForms
             }
         }
 
+        private static string labelBaslangicMetinAl(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+                return string.Empty;
+
+            if (str.IndexOf(':') < 0)
+                return str;
+
+            var temp = str.Remove(str.IndexOf(':')).Trim() + ": ";
+            return temp;
+        }
+
+        public static void LabeleYazdir(this Label label,string str)
+        {
+
+            label.InvokeIfRequired((MethodInvoker)delegate ()
+            {
+                label.Text = labelBaslangicMetinAl(label.Text) + str;
+            });
+        }
+
         public static List<decimal?> WeighteedMovingAverage(this List<decimal?> data, int periyot)
         {
             var agirlikliHareketliOrtalamalar = new List<decimal?>();

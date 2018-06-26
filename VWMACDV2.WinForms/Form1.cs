@@ -145,23 +145,27 @@ namespace VWMACDV2.WinForms
             listBox_SinyalAlinanlar.Items.Clear();
             listBox_Diger.Items.Clear();
             listBox_Ortalamalar.Items.Clear();
+            listBox_Hatalar.Items.Clear();
             Task.Run(() =>
             {
                 using (var binanceClient = new BinanceClient())
                 {
                     var data = binanceClient.GetAllPrices().Data;
-                    label_BinanceClientCoinAdet.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        label_BinanceClientCoinAdet.Text = labelBaslangicMetinAl(label_BinanceClientCoinAdet.Text) + data.Count().ToString();
-                    });
-                    data.Where(x => x.Symbol.EndsWith("BTC"))
-                        .Select(x => x.Symbol = x.Symbol.Replace("BTC", ""))
+
+                    var enumerable = data.Where(x => x.Symbol.EndsWith("BTC"))
+                        .Select(x => x.Symbol = x.Symbol.Replace("BTC", "")).ToList();
+
+                    label_BinanceClientCoinAdet.LabeleYazdir(enumerable.Count().ToString());
+
+                    enumerable
                         .AsParallel()
                         .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
-                        .ForAll(x => verileriAnalizEt(x));
+                        .ForAll(verileriAnalizEt);
                 }
             });
         }
+
+       
         /*
                //@version=3
                //created by Buff DORMEIER
@@ -204,13 +208,13 @@ namespace VWMACDV2.WinForms
                 var candles = data.Where(x => x.Close > 0).ToList();
                 adim = 9;
                 adim = 10;
-                if (!candles.Any())
-                {
-                    adim = 11;
-                    MessageBox.Show("Hiç Mum Yok, Coin: " + sembol);
-                    adim = 12;
-                    return;
-                }
+                //if (!candles.Any())
+                //{
+                //    adim = 11;
+                //    MessageBox.Show("Hiç Mum Yok, Coin: " + sembol);
+                //    adim = 12;
+                //    return;
+                //}
                 adim = 13;
                 adim = 14;
                 var kalan = candles.Count % 4;
@@ -426,12 +430,9 @@ namespace VWMACDV2.WinForms
                     });
                 }
             }
-
+            label_IslemeAlinanCoinAdedi.LabeleYazdir(Interlocked.Increment(ref sayac).ToString());
             //var ema144 = closes.Ema(144).Last();
-            label_IslemeAlinanCoinAdedi.InvokeIfRequired((MethodInvoker)delegate ()
-            {
-                label_IslemeAlinanCoinAdedi.Text = labelBaslangicMetinAl(label_IslemeAlinanCoinAdedi.Text) + (Interlocked.Increment(ref sayac)).ToString();
-            });        
+      
          
         
         }
