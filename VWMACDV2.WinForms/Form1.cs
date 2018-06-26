@@ -28,6 +28,9 @@ namespace VWMACDV2.WinForms
         private readonly RollingPointPairList closeSma50Listesi = new RollingPointPairList(_limit);
         private readonly RollingPointPairList closeSma200Listesi = new RollingPointPairList(_limit);
         Dictionary<string, Listeler> kayitlar = new Dictionary<string, Listeler>();
+        private static readonly int fastperiod = 12;
+        private static readonly int slowperiod = 26;
+        private static readonly int signalperiod = 9;
         private long sayac;
         private long sinyalAdet;
         private long digerAdet;
@@ -158,6 +161,7 @@ namespace VWMACDV2.WinForms
                     label_BinanceClientCoinAdet.LabeleYazdir(enumerable.Count().ToString());
 
                     enumerable
+                        .Take(1)
                         .AsParallel()
                         .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
                         .ForAll(verileriAnalizEt);
@@ -191,11 +195,9 @@ namespace VWMACDV2.WinForms
             {
                 var client = new CryptoCompareClient();
                 adim = 1;
-                var fastperiod = 12;
                 adim = 2;
-                var slowperiod = 26;
+
                 adim = 3;
-                var signalperiod = 9;
                 adim = 4;
                 HistoryResponse historyHour;
                 try
@@ -210,7 +212,7 @@ namespace VWMACDV2.WinForms
                 {
                     listBox_Hatalar.ListBoxStringEkle(sembol + "Coini Binance da Mevcut Değil: " + ictenDisaHatalariAl(ex));
                     return;
-                }             
+                }
                 adim = 7;
                 var data = historyHour.Data;
                 adim = 8;
@@ -218,11 +220,11 @@ namespace VWMACDV2.WinForms
                 adim = 9;
                 adim = 10;
                 var listeler = new Listeler();
-                listeler.Closes1Saatlik = candles.Select(x => x.Close);
+                listeler.Closes1Saatlik = new List<decimal>();
                 if (!candles.Any())
                 {
                     adim = 11;
-                    MessageBox.Show("Hiç Mum Yok, Coin: " + sembol);
+                    listBox_Hatalar.ListBoxStringEkle("Hiç Mum Yok, Coin: " + sembol);
                     adim = 12;
                     return;
                 }
@@ -232,8 +234,9 @@ namespace VWMACDV2.WinForms
                 adim = 15;
                 candles = candles.Skip(kalan).ToList();
                 adim = 16;
-                var liste4Saatlik = new List<decimal>();
+                var liste4SaatlikCloses = new List<decimal>();
                 var liste4SaatlikHacim = new List<decimal>();
+                var liste1SaatlikHacim = new List<decimal>();
                 adim = 17;
                 var son4Indeks = candles.Count / 4;
                 adim = 18;
@@ -249,46 +252,29 @@ namespace VWMACDV2.WinForms
                     foreach (var mum in mumlar)
                     {
                         adim = 24;
+                        liste1SaatlikHacim.Add(candleData.VolumeFrom);
+                        listeler.Closes1Saatlik.Add(candleData.Close);
                         candleData.VolumeFrom += mum.VolumeFrom;
                         adim = 25;
                     }
                     adim = 26;
                     candleData.Close = mumlar.Last().Close;
                     adim = 27;
-                    liste4Saatlik.Add(candleData.Close);
+                    liste4SaatlikCloses.Add(candleData.Close);
                     liste4SaatlikHacim.Add(candleData.VolumeFrom);
                     adim = 28;
                 }
                 adim = 29;
-                var closes = liste4Saatlik;
-                var volumes = liste4SaatlikHacim;
-                var closesCount = closes.Count;
-                //var volumesXCloses = liste4Saatlik.Select(x => x.Close * x.VolumeFrom).ToList();
-                var volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
-                adim = 30;
-                adim = 31;
-                adim = 32;
-                var fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
-                adim = 33;
-                var slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
-                adim = 34;
-                var vwmacd = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
-                adim = 35;
-                var signal = vwmacd.Ema(signalperiod).ToList();
-                adim = 36;
-                var hist = vwmacd.Zip(signal, (x, y) => x - y).ToList();
+                listeler.Volumes1Saatlik = liste1SaatlikHacim;
+                listeler.Volumes4Saatlik = liste4SaatlikHacim;
+                listeler.Closes4Saatlik = liste4SaatlikCloses;
+                int closesCount=listeler.Closes4Saatlik.Count;
+                VWMACDV2Hesapla(listeler);
                 adim = 37;
                 adim = 38;
-                adim = 39;
-                listeler.Closes4Saatlik = closes;
-                adim = 40;
-                listeler.Vwmacd = vwmacd;
-                adim = 41;
-                listeler.Signal = signal;
-                adim = 42;
-                listeler.Hist = hist;
+                adim = 39;   
                 adim = 43;
-                listeler.Wma = closes
+                listeler.Wma = listeler.Closes4Saatlik
                     .WeighteedMovingAverage(3)
                     .WeighteedMovingAverage(5)
                     .WeighteedMovingAverage(8)
@@ -298,10 +284,10 @@ namespace VWMACDV2.WinForms
                 adim = 44;
 
                 if (closesCount >= 144)
-                {                   
+                {
                     //closes = closes.Where(x => x.HasValue && x.Value > 0).ToList();
                     //var t = ema144.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();                
-                    listeler.Ema144 = closes.Ema(144).ToList();
+                    listeler.Ema144 = listeler.Closes4Saatlik.Ema(144).ToList();
                     //for (int i = 0; i < t.Count; i++)
                     //{
                     //    listeyeEkle(closeEma144Listesi, zedGraphControl3, i, t[i]);
@@ -309,7 +295,7 @@ namespace VWMACDV2.WinForms
                 }
                 if (closesCount >= 50)
                 {
-                    listeler.Sma50= closes.Sma(50).ToList();
+                    listeler.Sma50 = listeler.Closes4Saatlik.Sma(50).ToList();
                     //var sma50 = closes.Sma(50);
                     //var y = sma50.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
                     //for (int i = 0; i < y.Count; i++)
@@ -319,7 +305,7 @@ namespace VWMACDV2.WinForms
                 }
                 if (closesCount >= 200)
                 {
-                    listeler.Sma200 = closes.Sma(200).ToList();
+                    listeler.Sma200 = listeler.Closes4Saatlik.Sma(200).ToList();
                     //var sma200 = closes.Sma(200);
                     //var k = sma200.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
                     //for (int i = 0; i < k.Count; i++)
@@ -338,6 +324,26 @@ namespace VWMACDV2.WinForms
                 string hata = ictenDisaHatalariAl(ex);
                 listBox_Hatalar.ListBoxStringEkle(temp + hata);
             }
+        }
+
+        private static void VWMACDV2Hesapla(Listeler listeler)
+        {
+            var closes = listeler.Closes4Saatlik;
+            var volumes = listeler.Volumes4Saatlik;
+            var volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
+            var fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
+            var slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
+            listeler.Vwmacd4Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
+            listeler.Signal4Saatlik = listeler.Vwmacd4Saatlik.Ema(signalperiod).ToList();
+            listeler.Hist4Saatlik = listeler.Vwmacd4Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
+            closes = listeler.Closes1Saatlik.Where(x=>x>0).ToList();
+            volumes = listeler.Volumes1Saatlik.Where(x => x > 0).ToList();
+            volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
+            fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
+            slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
+            listeler.Vwmacd1Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
+            listeler.Signal1Saatlik = listeler.Vwmacd1Saatlik.Ema(signalperiod).ToList();
+            listeler.Hist1Saatlik = listeler.Vwmacd1Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
         }
 
         private static string ictenDisaHatalariAl(Exception ex)
@@ -362,9 +368,9 @@ namespace VWMACDV2.WinForms
                 label_KayitlarAdet.Text = labelBaslangicMetinAl(label_KayitlarAdet.Text) + kayitlar.Count;
             });
             var closes = kayit.Closes4Saatlik;
-            var signal = kayit.Signal;
-            var vwmacd = kayit.Vwmacd;
-            var hist = kayit.Hist;
+            var signal = kayit.Signal4Saatlik;
+            var vwmacd = kayit.Vwmacd4Saatlik;
+            var hist = kayit.Hist4Saatlik;
             var wma = kayit.Wma;
             var closesCount = closes.Count;
             if (!closes.Any())
@@ -481,10 +487,10 @@ namespace VWMACDV2.WinForms
                 closes = closes.Where(x => x > 0).ToList();
                 if (!closes.Any())
                     return;
-                var vwmacd = kayitlar[key].Vwmacd;
+                var vwmacd = kayitlar[key].Vwmacd4Saatlik;
                 var count = vwmacd.Count;
-                var signal = kayitlar[key].Signal;
-                var hist = kayitlar[key].Hist;
+                var signal = kayitlar[key].Signal4Saatlik;
+                var hist = kayitlar[key].Hist4Saatlik;
                 var ema144 = kayitlar[key].Ema144;
                 var sma50 = kayitlar[key].Sma50;
                 var sma200 = kayitlar[key].Sma200;
