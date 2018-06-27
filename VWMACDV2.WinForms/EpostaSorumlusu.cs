@@ -116,14 +116,14 @@ namespace VWMACDV2.WinForms
             return temp;
         }
 
-        public static void LabeleYazdir(this Label label,string str)
+        public static void Yazdir(this Label label,string str)
         {
             label.InvokeIfRequired((MethodInvoker)delegate ()
             {
                 label.Text = labelBaslangicMetinAl(label.Text) + str;
             });
         }
-       public static void ListBoxStringEkle(this ListBox listBox, string temp)
+       public static void Yazdir(this ListBox listBox, string temp)
         {
             if (listBox.InvokeRequired)
             {

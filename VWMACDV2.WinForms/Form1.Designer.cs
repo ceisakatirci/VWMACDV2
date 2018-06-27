@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+            this.zedGraphControl_VWMACDV24Saatlik = new ZedGraph.ZedGraphControl();
             this.button_Baslat = new System.Windows.Forms.Button();
             this.listBox_SinyalAlinanlar = new System.Windows.Forms.ListBox();
             this.listBox_Ortalamalar = new System.Windows.Forms.ListBox();
@@ -50,40 +50,43 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.zedGraphControl3 = new ZedGraph.ZedGraphControl();
-            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.zedGraphControl_VWMACDV21Saatlik = new ZedGraph.ZedGraphControl();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
-            this.tabPage7.SuspendLayout();
+            this.tabPage8.SuspendLayout();
             this.SuspendLayout();
             // 
-            // zedGraphControl1
+            // zedGraphControl_VWMACDV24Saatlik
             // 
-            this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.zedGraphControl1.IsShowPointValues = true;
-            this.zedGraphControl1.Location = new System.Drawing.Point(3, 3);
-            this.zedGraphControl1.Name = "zedGraphControl1";
-            this.zedGraphControl1.ScrollGrace = 0D;
-            this.zedGraphControl1.ScrollMaxX = 0D;
-            this.zedGraphControl1.ScrollMaxY = 0D;
-            this.zedGraphControl1.ScrollMaxY2 = 0D;
-            this.zedGraphControl1.ScrollMinX = 0D;
-            this.zedGraphControl1.ScrollMinY = 0D;
-            this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(1450, 612);
-            this.zedGraphControl1.TabIndex = 0;
-            this.zedGraphControl1.UseExtendedPrintDialog = true;
+            this.zedGraphControl_VWMACDV24Saatlik.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zedGraphControl_VWMACDV24Saatlik.IsShowPointValues = true;
+            this.zedGraphControl_VWMACDV24Saatlik.Location = new System.Drawing.Point(3, 3);
+            this.zedGraphControl_VWMACDV24Saatlik.Name = "zedGraphControl_VWMACDV24Saatlik";
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollGrace = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMaxX = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMaxY = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMaxY2 = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMinX = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMinY = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.ScrollMinY2 = 0D;
+            this.zedGraphControl_VWMACDV24Saatlik.Size = new System.Drawing.Size(1450, 612);
+            this.zedGraphControl_VWMACDV24Saatlik.TabIndex = 0;
+            this.zedGraphControl_VWMACDV24Saatlik.UseExtendedPrintDialog = true;
             // 
             // button_Baslat
             // 
@@ -249,7 +252,7 @@
             this.zedGraphControl2.ScrollMinX = 0D;
             this.zedGraphControl2.ScrollMinY = 0D;
             this.zedGraphControl2.ScrollMinY2 = 0D;
-            this.zedGraphControl2.Size = new System.Drawing.Size(1084, 474);
+            this.zedGraphControl2.Size = new System.Drawing.Size(1450, 612);
             this.zedGraphControl2.TabIndex = 0;
             this.zedGraphControl2.UseExtendedPrintDialog = true;
             // 
@@ -299,11 +302,23 @@
             this.tabPage1.Text = "Diğerleri";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.listBox_Hatalar);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(271, 783);
+            this.tabPage7.TabIndex = 3;
+            this.tabPage7.Text = "Hatalar";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
             // tabControl2
             // 
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage5);
             this.tabControl2.Controls.Add(this.tabPage6);
+            this.tabControl2.Controls.Add(this.tabPage8);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControl2.Location = new System.Drawing.Point(279, 0);
             this.tabControl2.Name = "tabControl2";
@@ -313,13 +328,13 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.zedGraphControl1);
+            this.tabPage4.Controls.Add(this.zedGraphControl_VWMACDV24Saatlik);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(1456, 618);
             this.tabPage4.TabIndex = 0;
-            this.tabPage4.Text = "VWMACDV2";
+            this.tabPage4.Text = "VWMACDV2 4 Saatlik";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
@@ -328,7 +343,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(1090, 480);
+            this.tabPage5.Size = new System.Drawing.Size(1456, 618);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Ortalamalar";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -339,7 +354,7 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(1090, 480);
+            this.tabPage6.Size = new System.Drawing.Size(1456, 618);
             this.tabPage6.TabIndex = 2;
             this.tabPage6.Text = "tabPage6";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -356,20 +371,36 @@
             this.zedGraphControl3.ScrollMinX = 0D;
             this.zedGraphControl3.ScrollMinY = 0D;
             this.zedGraphControl3.ScrollMinY2 = 0D;
-            this.zedGraphControl3.Size = new System.Drawing.Size(1084, 474);
+            this.zedGraphControl3.Size = new System.Drawing.Size(1450, 612);
             this.zedGraphControl3.TabIndex = 0;
             this.zedGraphControl3.UseExtendedPrintDialog = true;
             // 
-            // tabPage7
+            // tabPage8
             // 
-            this.tabPage7.Controls.Add(this.listBox_Hatalar);
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
-            this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(271, 783);
-            this.tabPage7.TabIndex = 3;
-            this.tabPage7.Text = "Hatalar";
-            this.tabPage7.UseVisualStyleBackColor = true;
+            this.tabPage8.Controls.Add(this.zedGraphControl_VWMACDV21Saatlik);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(1456, 618);
+            this.tabPage8.TabIndex = 3;
+            this.tabPage8.Text = "tabPage8";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // zedGraphControl_VWMACDV21Saatlik
+            // 
+            this.zedGraphControl_VWMACDV21Saatlik.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zedGraphControl_VWMACDV21Saatlik.Location = new System.Drawing.Point(3, 3);
+            this.zedGraphControl_VWMACDV21Saatlik.Name = "zedGraphControl_VWMACDV21Saatlik";
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollGrace = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxX = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxY = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxY2 = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinX = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinY = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinY2 = 0D;
+            this.zedGraphControl_VWMACDV21Saatlik.Size = new System.Drawing.Size(1450, 612);
+            this.zedGraphControl_VWMACDV21Saatlik.TabIndex = 1;
+            this.zedGraphControl_VWMACDV21Saatlik.UseExtendedPrintDialog = true;
             // 
             // Form1
             // 
@@ -387,18 +418,19 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
-            this.tabPage7.ResumeLayout(false);
+            this.tabPage8.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ZedGraph.ZedGraphControl zedGraphControl1;
+        private ZedGraph.ZedGraphControl zedGraphControl_VWMACDV24Saatlik;
         private System.Windows.Forms.Button button_Baslat;
         private System.Windows.Forms.ListBox listBox_SinyalAlinanlar;
         private System.Windows.Forms.ListBox listBox_Ortalamalar;
@@ -425,6 +457,8 @@
         private System.Windows.Forms.TabPage tabPage6;
         private ZedGraph.ZedGraphControl zedGraphControl3;
         private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.TabPage tabPage8;
+        private ZedGraph.ZedGraphControl zedGraphControl_VWMACDV21Saatlik;
     }
 }
 
