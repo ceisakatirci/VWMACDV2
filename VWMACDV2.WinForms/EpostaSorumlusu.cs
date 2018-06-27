@@ -146,7 +146,7 @@ namespace VWMACDV2.WinForms
         {
             var agirlikliHareketliOrtalamalar = new List<decimal>();
             var dataKopya = new List<decimal>(data);
-            var p = (periyot * (periyot + 1) / 2);
+            var SumofWeight = 0.0m;
             //(Price X weighting factor) + (Price previous period X weighting factor-1)...
             //((90 x (4/10)) + (89 x (3/10)) + (88 x (2/10)) + (89 x (1/10)) = 36 + 26.7 + 17.6 + 8.9 = 89.2
             if (!dataKopya.Any())
@@ -162,26 +162,38 @@ namespace VWMACDV2.WinForms
                 if (!temp.Any())
                     break;
 
-                var count = temp.Count();
-                if (count < periyot)
+                List<decimal> tempList = new List<decimal>();
+
+                for (int j = periyot; j > 0; j--)
                 {
-                    var k = periyot - count;
-                    for (int j = 0; j < k; j++)
+                    var h = temp.Count;
+                    for (int k = 0; k < h; k++)
                     {
-                        temp.Add(sonEleman);
+                        tempList.Add(temp[k] * j);
+                        SumofWeight += j;
                     }
                 }
-                List<decimal> tempList = new List<decimal>();
-                for (int j = 0; j < periyot; j++)
-                {
-                    var g = (periyot - j);
-                    var h = temp[j];
-                    var t = (h * g);
-                    tempList.Add(t);
-                }
+
+                //var count = temp.Count();
+                //if (count < periyot)
+                //{
+                //    var k = periyot - count;
+                //    for (int j = 0; j < k; j++)
+                //    {
+                //        temp.Add(sonEleman);
+                //    }
+                //}
+                //for (int j = 0; j < periyot; j++)
+                //{
+                //    var g = (periyot - j);
+                //    var h = temp[j];
+                //    var t = (h * g);
+                //    tempList.Add(t);
+                //}
 
                 var s = tempList.Sum();
-                agirlikliHareketliOrtalamalar.Add(s / p);
+                agirlikliHareketliOrtalamalar.Add(s / SumofWeight);
+                SumofWeight = 0.0m;
             }
             return agirlikliHareketliOrtalamalar;
         }
