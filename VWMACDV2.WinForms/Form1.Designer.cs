@@ -35,6 +35,7 @@
             this.listBox_Ortalamalar = new System.Windows.Forms.ListBox();
             this.checkBox_Aktif = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button_Sirala = new System.Windows.Forms.Button();
             this.button_Yukle = new System.Windows.Forms.Button();
             this.button_Temizle = new System.Windows.Forms.Button();
             this.button_Kaydet = new System.Windows.Forms.Button();
@@ -131,6 +132,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button_Sirala);
             this.panel1.Controls.Add(this.button_Yukle);
             this.panel1.Controls.Add(this.button_Temizle);
             this.panel1.Controls.Add(this.button_Kaydet);
@@ -145,6 +147,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(539, 159);
             this.panel1.TabIndex = 8;
+            // 
+            // button_Sirala
+            // 
+            this.button_Sirala.Location = new System.Drawing.Point(322, 112);
+            this.button_Sirala.Name = "button_Sirala";
+            this.button_Sirala.Size = new System.Drawing.Size(75, 23);
+            this.button_Sirala.TabIndex = 8;
+            this.button_Sirala.Text = "Sırala";
+            this.button_Sirala.UseVisualStyleBackColor = true;
+            this.button_Sirala.Click += new System.EventHandler(this.button_Sirala_Click);
             // 
             // button_Yukle
             // 
@@ -459,6 +471,7 @@
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.TabPage tabPage8;
         private ZedGraph.ZedGraphControl zedGraphControl_VWMACDV21Saatlik;
+        private System.Windows.Forms.Button button_Sirala;
     }
 }
 

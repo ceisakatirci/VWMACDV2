@@ -157,7 +157,7 @@ namespace VWMACDV2.WinForms
                     enumerable
                         .AsParallel()
                         .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
-                        .ForAll(_anlizEt);
+                        .ForAll(_analizEt);
                 }
             });
         }
@@ -192,7 +192,7 @@ namespace VWMACDV2.WinForms
                //plot(hist, color=green, linewidth=4, style=histogram)
                plot(0, color=black)      
            */
-        private void _anlizEt(string sembol)
+        private void _analizEt(string sembol)
         {
             try
             {
@@ -211,18 +211,23 @@ namespace VWMACDV2.WinForms
                 }
                 var data = historyHour.Data;
                 var candles = data.Where(x => x.Close > 0).ToList();
-                var listeler = new Listeler();
-                listeler.Closes1Saatlik = new List<decimal>();
                 if (!candles.Any())
                 {
                     listBox_Hatalar.Yazdir("Hiç Mum Yok, Coin: " + sembol);
                     return;
                 }
-                var kalan = candles.Count % 4;
-                candles = candles.Skip(kalan).ToList();
+                var listeler = new Listeler();
                 var liste4SaatlikCloses = new List<decimal>();
                 var liste4SaatlikHacim = new List<decimal>();
                 var liste1SaatlikHacim = new List<decimal>();
+                var liste1SaatlikCloses = new List<decimal>();
+                liste1SaatlikHacim.AddRange(candles.Select(x => x.VolumeTo));
+                liste1SaatlikCloses.AddRange(candles.Select(x => x.Close));
+                listeler.Closes1Saatlik = liste1SaatlikCloses;
+                listeler.Volumes1Saatlik = liste1SaatlikHacim;
+
+                var kalan = candles.Count % 4;
+                candles = candles.Skip(kalan).ToList();         
                 var son4Indeks = candles.Count / 4;
                 for (var i = 0; i < son4Indeks; i++)
                 {
@@ -230,18 +235,15 @@ namespace VWMACDV2.WinForms
                     var candleData = new CandleData();
                     foreach (var mum in mumlar)
                     {
-                        liste1SaatlikHacim.Add(candleData.VolumeFrom);
-                        listeler.Closes1Saatlik.Add(candleData.Close);
-                        candleData.VolumeFrom += mum.VolumeFrom;
+                        candleData.VolumeTo += mum.VolumeTo;
                     }
                     candleData.Close = mumlar.Last().Close;
                     liste4SaatlikCloses.Add(candleData.Close);
-                    liste4SaatlikHacim.Add(candleData.VolumeFrom);
+                    liste4SaatlikHacim.Add(candleData.VolumeTo);
                 }
-                listeler.Volumes1Saatlik = liste1SaatlikHacim;
                 listeler.Volumes4Saatlik = liste4SaatlikHacim;
                 listeler.Closes4Saatlik = liste4SaatlikCloses;
-                int closesCount=listeler.Closes4Saatlik.Count;
+                int closesCount = listeler.Closes4Saatlik.Count;
                 VWMACDV2Hesapla(listeler);
                 listeler.Wma = listeler.Closes4Saatlik
                     .WeighteedMovingAverage(3)
@@ -285,9 +287,8 @@ namespace VWMACDV2.WinForms
             }
             catch (Exception ex)
             {
-                temp += ", ";
                 string hata = _ictenDisaHatalariAl(ex);
-                listBox_Hatalar.Yazdir(temp + hata);
+                listBox_Hatalar.Yazdir(hata);
             }
         }
         private static void VWMACDV2Hesapla(Listeler listeler)
@@ -300,14 +301,14 @@ namespace VWMACDV2.WinForms
             listeler.Vwmacd4Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
             listeler.Signal4Saatlik = listeler.Vwmacd4Saatlik.Ema(signalperiod).ToList();
             listeler.Hist4Saatlik = listeler.Vwmacd4Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
-            //closes = listeler.Closes1Saatlik.Where(x=>x>0).ToList();
-            //volumes = listeler.Volumes1Saatlik.Where(x => x > 0).ToList();
-            //volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
-            //fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
-            //slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
-            //listeler.Vwmacd1Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
-            //listeler.Signal1Saatlik = listeler.Vwmacd1Saatlik.Ema(signalperiod).ToList();
-            //listeler.Hist1Saatlik = listeler.Vwmacd1Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
+            closes = listeler.Closes1Saatlik.Where(x => x > 0).ToList();
+            volumes = listeler.Volumes1Saatlik.Where(x => x > 0).ToList();
+            volumesXcloses = closes.Zip(volumes, (x, y) => x * y).ToList();
+            fastEma = volumesXcloses.Ema(fastperiod).Zip(volumes.Ema(fastperiod), (x, y) => x / y).ToList();
+            slowEma = volumesXcloses.Ema(slowperiod).Zip(volumes.Ema(slowperiod), (x, y) => x / y).ToList();
+            listeler.Vwmacd1Saatlik = fastEma.Zip(slowEma, (x, y) => x - y).ToList();
+            listeler.Signal1Saatlik = listeler.Vwmacd1Saatlik.Ema(signalperiod).ToList();
+            listeler.Hist1Saatlik = listeler.Vwmacd1Saatlik.Zip(listeler.Signal4Saatlik, (x, y) => x - y).ToList();
         }
         private static string _ictenDisaHatalariAl(Exception ex)
         {
@@ -442,10 +443,10 @@ namespace VWMACDV2.WinForms
                 closes = closes.Where(x => x > 0).ToList();
                 if (!closes.Any())
                     return;
-                var vwmacd = kayitlar[key].Vwmacd4Saatlik;
-                var count = vwmacd.Count;
-                var signal = kayitlar[key].Signal4Saatlik;
-                var hist = kayitlar[key].Hist4Saatlik;
+                var vwmacdSaatlik = kayitlar[key].Vwmacd4Saatlik;
+                var count = vwmacdSaatlik.Count;
+                var signal4Saatlik = kayitlar[key].Signal4Saatlik;
+                var hist4Saatlik = kayitlar[key].Hist4Saatlik;
                 var ema144 = kayitlar[key].Ema144;
                 var sma50 = kayitlar[key].Sma50;
                 var sma200 = kayitlar[key].Sma200;
@@ -461,9 +462,9 @@ namespace VWMACDV2.WinForms
                 var wma = kayitlar[key].Wma;
                 for (int i = 0; i < count; i++)
                 {
-                    vwmacdListesineEkle(i, Convert.ToDouble(vwmacd[i]));
-                    signalListesineEkle(i, Convert.ToDouble(signal[i]));
-                    histListesineEkle(i, Convert.ToDouble(hist[i]));
+                    vwmacdListesineEkle(i, Convert.ToDouble(vwmacdSaatlik[i]));
+                    signalListesineEkle(i, Convert.ToDouble(signal4Saatlik[i]));
+                    histListesineEkle(i, Convert.ToDouble(hist4Saatlik[i]));
                     closesListesineEkle(i, Convert.ToDouble(closes[i]));
                 }
                 count = wma.Count;
@@ -557,12 +558,18 @@ namespace VWMACDV2.WinForms
                 kayitlar = (Dictionary<string, Listeler>)File.ReadAllBytes(dosyaAdi).DeSerialize();
                 if (kayitlar != null && kayitlar.Any())
                 {
-                    foreach (var key in kayitlar.Keys)
+                    var temp = kayitlar.OrderByDescending(x => x.Value.Volumes4Saatlik.Any() ? x.Value.Volumes4Saatlik.Last() : 0.0m);
+                    foreach (var key in temp)
                     {
-                        listBoxlariDoldur(key);
+                        listBoxlariDoldur(key.Key);
                     }
                 }
             }
+        }
+
+        private void button_Sirala_Click(object sender, EventArgs e)
+        {
+            button_Yukle_Click(null, null);
         }
     }
 }
@@ -589,7 +596,7 @@ namespace VWMACDV2.WinForms
 //var temp = response.Result.Data.Where(x => x.Close > 0).ToList();
 //foreach (var item in temp)
 //{
-//    Console.WriteLine(item.Time + " => " + item.Close + "  =>  " + item.VolumeFrom + " => " + item.VolumeTo);
+//    Console.WriteLine(item.Time + " => " + item.Close + "  =>  " + item.VolumeTo + " => " + item.VolumeTo);
 //}
 //private void listBox_SinyalAlinanlarHepsiContains(string sembol)
 //{
