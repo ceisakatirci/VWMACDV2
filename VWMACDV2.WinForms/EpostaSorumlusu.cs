@@ -171,8 +171,6 @@ namespace VWMACDV2.WinForms
                         temp.Add(sonEleman);
                     }
                 }
-
-
                 List<decimal> tempList = new List<decimal>();
                 for (int j = 0; j < periyot; j++)
                 {

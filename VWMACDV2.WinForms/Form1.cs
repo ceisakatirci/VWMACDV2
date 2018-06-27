@@ -460,7 +460,7 @@ namespace VWMACDV2.WinForms
         }
         bool araliktaMi(decimal? limit, decimal? deger)
         {
-            return limit * 0.97m <= deger && deger <= limit * 1.03m;
+            return limit * 0.99m <= deger && deger <= limit * 1.01m;
         }
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
