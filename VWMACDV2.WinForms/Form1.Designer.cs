@@ -58,7 +58,6 @@
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.zedGraphControl3 = new ZedGraph.ZedGraphControl();
             this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.zedGraphControl_VWMACDV21Saatlik = new ZedGraph.ZedGraphControl();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -69,7 +68,6 @@
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
-            this.tabPage8.SuspendLayout();
             this.SuspendLayout();
             // 
             // zedGraphControl_VWMACDV24Saatlik
@@ -389,7 +387,6 @@
             // 
             // tabPage8
             // 
-            this.tabPage8.Controls.Add(this.zedGraphControl_VWMACDV21Saatlik);
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
@@ -397,22 +394,6 @@
             this.tabPage8.TabIndex = 3;
             this.tabPage8.Text = "tabPage8";
             this.tabPage8.UseVisualStyleBackColor = true;
-            // 
-            // zedGraphControl_VWMACDV21Saatlik
-            // 
-            this.zedGraphControl_VWMACDV21Saatlik.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.zedGraphControl_VWMACDV21Saatlik.Location = new System.Drawing.Point(3, 3);
-            this.zedGraphControl_VWMACDV21Saatlik.Name = "zedGraphControl_VWMACDV21Saatlik";
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollGrace = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxX = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxY = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMaxY2 = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinX = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinY = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.ScrollMinY2 = 0D;
-            this.zedGraphControl_VWMACDV21Saatlik.Size = new System.Drawing.Size(1450, 612);
-            this.zedGraphControl_VWMACDV21Saatlik.TabIndex = 1;
-            this.zedGraphControl_VWMACDV21Saatlik.UseExtendedPrintDialog = true;
             // 
             // Form1
             // 
@@ -435,7 +416,6 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
-            this.tabPage8.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -470,7 +450,6 @@
         private ZedGraph.ZedGraphControl zedGraphControl3;
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.TabPage tabPage8;
-        private ZedGraph.ZedGraphControl zedGraphControl_VWMACDV21Saatlik;
         private System.Windows.Forms.Button button_Sirala;
     }
 }

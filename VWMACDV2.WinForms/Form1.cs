@@ -53,7 +53,7 @@ namespace VWMACDV2.WinForms
             //myPane3.YAxis.Scale.MinAuto = true;
             var Wmacd = myPane.AddCurve("Wmacd", vwmacdList, Color.Blue, SymbolType.Star);
             var Wma = myPane2.AddCurve("Wma", wmaList, Color.Blue, SymbolType.Star);
-            var Closes = myPane3.AddCurve("Closes", closeListesi, Color.Pink, SymbolType.None);
+            var Closes = myPane2.AddCurve("Closes", closeListesi, Color.Pink, SymbolType.None);
             var Ema144 = myPane3.AddCurve("Ema144", closeEma144Listesi, Color.Aqua, SymbolType.None);
             var Sma200 = myPane3.AddCurve("Sma200", closeSma200Listesi, Color.Red, SymbolType.None);
             var Sma50 = myPane3.AddCurve("Sma50", closeSma50Listesi, Color.Green, SymbolType.None);
