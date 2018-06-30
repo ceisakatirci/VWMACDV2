@@ -142,60 +142,47 @@ namespace VWMACDV2.WinForms
             }
         }
 
+        /*
+         * 
+         * 
+         * 
+         * function doWMA( array, weightedPeriod ) {
+    var weightedArray = [];
+    for( var i = 0; i <= array.length - weightedPeriod; i++ ) {
+        var sum = 0;
+        for( var j = 0; j < weightedPeriod; j++ ) {
+            sum += array[ i + j ] * ( weightedPeriod - j );
+        }
+        weightedArray[i] = sum / (( weightedPeriod * ( weightedPeriod + 1 )) / 2 );
+    }
+    return weightedArray;
+}
+         
+             */
+  
+
         public static List<decimal> WeighteedMovingAverage(this List<decimal> data, int periyot)
         {
-            var agirlikliHareketliOrtalamalar = new List<decimal>();
-            var dataKopya = new List<decimal>(data);
-            var SumofWeight = 0.0m;
-            //(Price X weighting factor) + (Price previous period X weighting factor-1)...
-            //((90 x (4/10)) + (89 x (3/10)) + (88 x (2/10)) + (89 x (1/10)) = 36 + 26.7 + 17.6 + 8.9 = 89.2
-            if (!dataKopya.Any())
+            var liste = new List<decimal>();
+            data.Reverse();
+            var uzunluk = data.Count;
+            for (int i = 0; i < uzunluk; i++)
             {
-                return agirlikliHareketliOrtalamalar;
-            }
-            dataKopya.Reverse();
-            var limit = dataKopya.Count();
-            var sonEleman = dataKopya[limit - 1];
-            for (int i = 0; i < limit; i++)
-            {
-                var temp = dataKopya.Skip(i).Take(periyot).ToList();
-                if (!temp.Any())
-                    break;
-
-                List<decimal> tempList = new List<decimal>();
-
-                for (int j = periyot; j > 0; j--)
-                {
-                    var h = temp.Count;
-                    for (int k = 0; k < h; k++)
-                    {
-                        tempList.Add(temp[k] * j);
-                        SumofWeight += j;
-                    }
+                var pencere = data.Skip(i).Take(periyot).ToList();
+                var bolum = 0.0m;
+                var bolen = 0.0m;
+                for (int j = 0, k = periyot; j < pencere.Count; j++, k--)
+                {                  
+                    bolum += pencere[j] * k;
+                    bolen += k;
+                    if (k == 1)
+                        k = periyot;
                 }
+                liste.Add(bolum / bolen);
+            }            
 
-                //var count = temp.Count();
-                //if (count < periyot)
-                //{
-                //    var k = periyot - count;
-                //    for (int j = 0; j < k; j++)
-                //    {
-                //        temp.Add(sonEleman);
-                //    }
-                //}
-                //for (int j = 0; j < periyot; j++)
-                //{
-                //    var g = (periyot - j);
-                //    var h = temp[j];
-                //    var t = (h * g);
-                //    tempList.Add(t);
-                //}
+            return liste;
 
-                var s = tempList.Sum();
-                agirlikliHareketliOrtalamalar.Add(s / SumofWeight);
-                SumofWeight = 0.0m;
-            }
-            return agirlikliHareketliOrtalamalar;
         }
     }
 

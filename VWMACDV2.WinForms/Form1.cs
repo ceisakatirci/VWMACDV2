@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Trady.Analysis;
+using Trady.Analysis.Infrastructure;
+using Trady.Core;
 using ZedGraph;
 namespace VWMACDV2.WinForms
 {
@@ -27,6 +29,7 @@ namespace VWMACDV2.WinForms
         private readonly RollingPointPairList closeEma144Listesi = new RollingPointPairList(_limit);
         private readonly RollingPointPairList closeSma50Listesi = new RollingPointPairList(_limit);
         private readonly RollingPointPairList closeSma200Listesi = new RollingPointPairList(_limit);
+        private readonly RollingPointPairList closeSma21Listesi = new RollingPointPairList(_limit);
         Dictionary<string, Listeler> kayitlar = new Dictionary<string, Listeler>();
         private static readonly int fastperiod = 12;
         private static readonly int slowperiod = 26;
@@ -39,37 +42,41 @@ namespace VWMACDV2.WinForms
         {
             InitializeComponent();
             var myPane = zedGraphControl_VWMACDV24Saatlik.GraphPane;
-            var myPane2 = zedGraphControl2.GraphPane;
-            var myPane3 = zedGraphControl3.GraphPane;
+            //var myPane2 = zedGraphControl_Ortalamalar.GraphPane;
+            //var myPane3 = zedGraphControl3.GraphPane;
             myPane.Title.Text = "VWMACDV2";
             myPane.XAxis.Title.Text = "4 Saatlik Arallıklar";
             myPane.YAxis.Title.Text = "Ema'lar";
-            myPane2.Title.Text = "MavilimW";
-            myPane2.XAxis.Title.Text = "4 Saatlik Arallıklar";
-            myPane2.YAxis.Title.Text = "Fiyat";
+            //myPane2.Title.Text = "MavilimW";
+            //myPane2.XAxis.Title.Text = "4 Saatlik Arallıklar";
+            //myPane2.YAxis.Title.Text = "Fiyat";
             myPane.YAxis.Scale.MaxAuto = true;
-            myPane2.YAxis.Scale.MaxAuto = true;
+            //myPane2.YAxis.Scale.MaxAuto = true;
             //myPane3.YAxis.Scale.MaxAuto = true;
             //myPane3.YAxis.Scale.MinAuto = true;
             var Wmacd = myPane.AddCurve("Wmacd", vwmacdList, Color.Blue, SymbolType.Star);
-            var Wma = myPane2.AddCurve("Wma", wmaList, Color.Blue, SymbolType.Star);
-            var Closes = myPane2.AddCurve("Closes", closeListesi, Color.Pink, SymbolType.None);
-            var Ema144 = myPane3.AddCurve("Ema144", closeEma144Listesi, Color.Aqua, SymbolType.None);
-            var Sma200 = myPane3.AddCurve("Sma200", closeSma200Listesi, Color.Red, SymbolType.None);
-            var Sma50 = myPane3.AddCurve("Sma50", closeSma50Listesi, Color.Green, SymbolType.None);
+            //var Wma = myPane2.AddCurve("Wma", wmaList, Color.Blue, SymbolType.None);
+            LineItem Closes =
+    new LineItem("Closes", closeListesi, Color.Pink, SymbolType.None,3.5f);
+            //var Closes = myPane2.AddCurve("Closes", closeListesi, Color.Pink, SymbolType.None);
+            //myPane2.CurveList.Add(Closes);
+            //var Ema144 = myPane2.AddCurve("Ema144", closeEma144Listesi, Color.Aqua, SymbolType.None);
+            //var Sma200 = myPane2.AddCurve("Sma200", closeSma200Listesi, Color.Red, SymbolType.None);
+            //var Sma21 = myPane2.AddCurve("Sma21", closeSma21Listesi, Color.Cyan, SymbolType.None);
+            //var Sma50 = myPane2.AddCurve("Sma50", closeSma50Listesi, Color.Green, SymbolType.None);
             var Signal = myPane.AddCurve("Signal", signalList, Color.Red, SymbolType.Star);
             var Hist = zedGraphControl_VWMACDV24Saatlik.GraphPane.AddBar("Hist", histList, Color.Green);
             Hist.Bar.Fill = new Fill(Color.Red, Color.White, Color.Red);
             Wmacd.Symbol.Fill = new Fill(Color.White);
-            Wma.Symbol.Fill = new Fill(Color.White);
+            //Wma.Symbol.Fill = new Fill(Color.White);
             Closes.Symbol.Fill = new Fill(Color.White);
             Signal.Symbol.Fill = new Fill(Color.White);
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
             myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
-            myPane2.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
-            myPane2.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
-            myPane3.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
-            myPane3.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
+            //myPane2.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
+            //myPane2.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
+            //myPane3.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
+            //myPane3.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
         }
         CancellationTokenSource cts = new CancellationTokenSource();
         //protected override void OnLoad(EventArgs e)
@@ -129,20 +136,20 @@ namespace VWMACDV2.WinForms
             zedGraph.AxisChange();
             zedGraph.Invalidate();
         }
-        void closesListesineEkle(double x, double y)
-        {
-            //x1++; c++;
-            closeListesi.Add(x, y);
-            zedGraphControl2.AxisChange();
-            zedGraphControl2.Invalidate();
-        }
-        void wmaListesineEkle(double x, double y)
-        {
-            //x1++; c++;
-            wmaList.Add(x, y);
-            zedGraphControl2.AxisChange();
-            zedGraphControl2.Invalidate();
-        }
+        //void closesListesineEkle(double x, double y)
+        //{
+        //    //x1++; c++;
+        //    closeListesi.Add(x, y);
+        //    zedGraphControl_Ortalamalar.AxisChange();
+        //    zedGraphControl_Ortalamalar.Invalidate();
+        //}
+        //void wmaListesineEkle(double x, double y)
+        //{
+        //    //x1++; c++;
+        //    wmaList.Add(x, y);
+        //    zedGraphControl_Ortalamalar.AxisChange();
+        //    zedGraphControl_Ortalamalar.Invalidate();
+        //}
         private void button_Baslat_Click(object sender, EventArgs e)
         {
             _formuTemizle();
@@ -161,6 +168,10 @@ namespace VWMACDV2.WinForms
                 }
             });
         }
+
+
+
+
         private void _formuTemizle()
         {
             listBox_SinyalAlinanlar.Items.Clear();
@@ -245,43 +256,14 @@ namespace VWMACDV2.WinForms
                 listeler.Closes4Saatlik = liste4SaatlikCloses;
                 int closesCount = listeler.Closes4Saatlik.Count;
                 VWMACDV2Hesapla(listeler);
-                listeler.Wma = listeler.Closes4Saatlik
+                listeler.Wma = new List<decimal>(listeler.Closes4Saatlik)
                     .WeighteedMovingAverage(3)
                     .WeighteedMovingAverage(5)
                     .WeighteedMovingAverage(8)
                     .WeighteedMovingAverage(13)
                     .WeighteedMovingAverage(21)
                     .WeighteedMovingAverage(34);
-                if (closesCount >= 144)
-                {
-                    //closes = closes.Where(x => x.HasValue && x.Value > 0).ToList();
-                    //var t = ema144.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();                
-                    listeler.Ema144 = listeler.Closes4Saatlik.Ema(144).ToList();
-                    //for (int i = 0; i < t.Count; i++)
-                    //{
-                    //    listeyeEkle(closeEma144Listesi, zedGraphControl3, i, t[i]);
-                    //}
-                }
-                if (closesCount >= 50)
-                {
-                    listeler.Sma50 = listeler.Closes4Saatlik.Sma(50).ToList();
-                    //var sma50 = closes.Sma(50);
-                    //var y = sma50.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
-                    //for (int i = 0; i < y.Count; i++)
-                    //{
-                    //    listeyeEkle(closeSma50Listesi, zedGraphControl3, i, y[i]);
-                    //}
-                }
-                if (closesCount >= 200)
-                {
-                    listeler.Sma200 = listeler.Closes4Saatlik.Sma(200).ToList();
-                    //var sma200 = closes.Sma(200);
-                    //var k = sma200.Select(x => (double)(x.HasValue ? x.Value : 0.0m)).ToList();
-                    //for (int i = 0; i < k.Count; i++)
-                    //{
-                    //    listeyeEkle(closeSma200Listesi, zedGraphControl3, i, k[i]);
-                    //}
-                }
+              
                 kayilardaYoksaEkleVarsaGuncelle(sembol, listeler);
                 listBoxlariDoldur(sembol);
             }
@@ -372,42 +354,13 @@ namespace VWMACDV2.WinForms
                         label_DigerAdet.Text = labelBaslangicMetinAl(label_DigerAdet.Text) + (Interlocked.Increment(ref digerAdet)).ToString();
                     });
                 }
-            }
-            if (kayit.Ema144 != null && kayit.Ema144.Any())
-            {
-                if (araliktaMi(kayit.Ema144.Last(), last))
-                {
-                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        listBox_Ortalamalar.Items.Add("EMA144-" + sembol);
-                    });
-                }
-            }
-            if (kayit.Sma200 != null && kayit.Sma200.Any())
-            {
-                if (araliktaMi(kayit.Sma200.Last(), last))
-                {
-                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        listBox_Ortalamalar.Items.Add("SMA200-" + sembol);
-                    });
-                }
-            }
-            if (kayit.Sma50 != null && kayit.Sma50.Any())
-            {
-                if (araliktaMi(kayit.Sma50.Last(), last))
-                {
-                    listBox_Ortalamalar.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        listBox_Ortalamalar.Items.Add("SMA50-" + sembol);
-                    });
-                }
-            }
+            }         
             label_IslemeAlinanCoinAdedi.Yazdir(Interlocked.Increment(ref sayac).ToString());
             //var ema144 = closes.Ema(144).Last();
         }
         private string labelBaslangicMetinAl(string str)
         {
+            string ffdfs = null;
             if (string.IsNullOrWhiteSpace(str) || (str.IndexOf(':') < 0))
             {
                 return string.Empty;
@@ -447,9 +400,10 @@ namespace VWMACDV2.WinForms
                 var count = vwmacdSaatlik.Count;
                 var signal4Saatlik = kayitlar[key].Signal4Saatlik;
                 var hist4Saatlik = kayitlar[key].Hist4Saatlik;
-                var ema144 = kayitlar[key].Ema144;
-                var sma50 = kayitlar[key].Sma50;
-                var sma200 = kayitlar[key].Sma200;
+                var ema144 = kayitlar[key].Closes4Saatlik.Ema(144);
+                var sma50 = kayitlar[key].Closes4Saatlik.Sma(50);
+                var sma21 = kayitlar[key].Closes4Saatlik.Sma(21);
+                var sma200 = kayitlar[key].Closes4Saatlik.Sma(200);
                 vwmacdList.Clear();
                 signalList.Clear();
                 histList.Clear();
@@ -465,34 +419,34 @@ namespace VWMACDV2.WinForms
                     vwmacdListesineEkle(i, Convert.ToDouble(vwmacdSaatlik[i]));
                     signalListesineEkle(i, Convert.ToDouble(signal4Saatlik[i]));
                     histListesineEkle(i, Convert.ToDouble(hist4Saatlik[i]));
-                    closesListesineEkle(i, Convert.ToDouble(closes[i]));
+                    //closesListesineEkle(i, Convert.ToDouble(closes[i]));
                 }
-                count = wma.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    wmaListesineEkle(i, Convert.ToDouble(wma[i]));
-                }
-                if (sma200!=null && sma200.Any())
-                {
-                    for (int i = 0; i < sma200.Count; i++)
-                    {
-                        listeyeEkle(closeSma200Listesi, zedGraphControl3, i,(double)(sma200[i]??0.0m));
-                    }
-                }
-                if (sma50 != null && sma50.Any())
-                {
-                    for (int i = 0; i < sma50.Count; i++)
-                    {
-                        listeyeEkle(closeSma50Listesi, zedGraphControl3, i, (double)(sma50[i] ?? 0.0m));
-                    }
-                }
-                if (ema144 != null && ema144.Any())
-                {
-                    for (int i = 0; i < ema144.Count; i++)
-                    {
-                        listeyeEkle(closeEma144Listesi, zedGraphControl3, i, (double)(ema144[i] ?? 0.0m));
-                    }
-                }
+                //count = wma.Count;
+                //for (int i = 0; i < count; i++)
+                //{
+                //    wmaListesineEkle(i, Convert.ToDouble(wma[i]));
+                //}
+                //var length = sma200.Count;
+                //for (int i = 0; i < length; i++)
+                //{
+                //    listeyeEkle(closeSma200Listesi, zedGraphControl_Ortalamalar, i, (double)(sma200[i] ?? 0.0m));
+                //}
+                //length = sma50.Count;
+                //for (int i = 0; i < length; i++)
+                //{
+                //    listeyeEkle(closeSma50Listesi, zedGraphControl_Ortalamalar, i, (double)(sma50[i] ?? 0.0m));
+                //}
+                //length = sma21.Count;
+                //for (int i = 0; i < length; i++)
+                //{
+                //    listeyeEkle(closeSma21Listesi, zedGraphControl_Ortalamalar, i, (double)(sma21[i] ?? 0.0m));
+                //}
+                //length = ema144.Count;
+                //for (int i = 0; i < length; i++)
+                //{
+                //    listeyeEkle(closeEma144Listesi, zedGraphControl_Ortalamalar, i, (double)(ema144[i] ?? 0.0m));
+                //}
+               
             }
         }
         private void listBox_AnlikSinyalAlinanlar_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -571,7 +525,13 @@ namespace VWMACDV2.WinForms
         {
             button_Yukle_Click(null, null);
         }
+
+
+
     }
+
+
+
 }
 //listBox_SinyalAlinanlar.InvokeIfRequired(new Action(() =>
 //{
