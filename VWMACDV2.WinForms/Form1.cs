@@ -263,7 +263,7 @@ namespace VWMACDV2.WinForms
                     .WeighteedMovingAverage(13)
                     .WeighteedMovingAverage(21)
                     .WeighteedMovingAverage(34);
-              
+
                 kayilardaYoksaEkleVarsaGuncelle(sembol, listeler);
                 listBoxlariDoldur(sembol);
             }
@@ -330,29 +330,32 @@ namespace VWMACDV2.WinForms
                     });
                 }
             }
-            if (hist.Any() && signal.Any() && vwmacd.Any())
+            if (closes.Count > 13 && hist.Any() && signal.Any() && vwmacd.Any())
             {
-                if (hist.Last().Value > 0)
+                if ((closes.Ema(13).LastOrDefault()?? 0.0m)> (closes.Sma(21).LastOrDefault()??0.0m))
                 {
-                    listBox_SinyalAlinanlar.InvokeIfRequired((MethodInvoker)delegate ()
+                    if (hist.Last().Value > 0)
                     {
-                        listBox_SinyalAlinanlar.Items.Add(sembol);
-                    });
-                    label_VWMACDV2SinyalAdet.InvokeIfRequired((MethodInvoker)delegate ()
+                        listBox_SinyalAlinanlar.InvokeIfRequired((MethodInvoker)delegate ()
+                        {
+                            listBox_SinyalAlinanlar.Items.Add(sembol);
+                        });
+                        label_VWMACDV2SinyalAdet.InvokeIfRequired((MethodInvoker)delegate ()
+                        {
+                            label_VWMACDV2SinyalAdet.Text = labelBaslangicMetinAl(label_VWMACDV2SinyalAdet.Text) + (Interlocked.Increment(ref sinyalAdet)).ToString();
+                        });
+                    }
+                    else
                     {
-                        label_VWMACDV2SinyalAdet.Text = labelBaslangicMetinAl(label_VWMACDV2SinyalAdet.Text) + (Interlocked.Increment(ref sinyalAdet)).ToString();
-                    });
-                }
-                else
-                {
-                    listBox_Diger.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        listBox_Diger.Items.Add(sembol);
-                    });
-                    label_DigerAdet.InvokeIfRequired((MethodInvoker)delegate ()
-                    {
-                        label_DigerAdet.Text = labelBaslangicMetinAl(label_DigerAdet.Text) + (Interlocked.Increment(ref digerAdet)).ToString();
-                    });
+                        listBox_Diger.InvokeIfRequired((MethodInvoker)delegate ()
+                        {
+                            listBox_Diger.Items.Add(sembol);
+                        });
+                        label_DigerAdet.InvokeIfRequired((MethodInvoker)delegate ()
+                        {
+                            label_DigerAdet.Text = labelBaslangicMetinAl(label_DigerAdet.Text) + (Interlocked.Increment(ref digerAdet)).ToString();
+                        });
+                    }
                 }
             }         
             label_IslemeAlinanCoinAdedi.Yazdir(Interlocked.Increment(ref sayac).ToString());
