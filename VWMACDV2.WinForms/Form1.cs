@@ -330,9 +330,9 @@ namespace VWMACDV2.WinForms
                     });
                 }
             }
-            if (closes.Count > 13 && hist.Any() && signal.Any() && vwmacd.Any())
+            if (closes.Count > 143 && hist.Any() && signal.Any() && vwmacd.Any())
             {
-                if ((closes.Ema(13).LastOrDefault()?? 0.0m)> (closes.Sma(21).LastOrDefault()??0.0m))
+                if ((closes.Sma(21).LastOrDefault() ?? 0.0m) > (closes.Ema(144).LastOrDefault() ?? 0.0m))
                 {
                     if (hist.Last().Value > 0)
                     {
